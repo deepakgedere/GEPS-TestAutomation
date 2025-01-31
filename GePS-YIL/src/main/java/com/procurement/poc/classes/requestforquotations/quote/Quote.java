@@ -2,6 +2,7 @@ package com.procurement.poc.classes.requestforquotations.quote;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.procurement.poc.constants.requestforquotations.LQuoSubmit;
 import com.procurement.poc.interfaces.login.ILogin;
 import com.procurement.poc.interfaces.logout.ILogout;
 import com.procurement.poc.interfaces.requestforquotation.IQuoSubmit;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static com.procurement.poc.constants.requestforquotations.LQuoSubmit.*;
+
 import static com.factory.PlaywrightFactory.waitForLocator;
 
 public class Quote implements IQuoSubmit {
@@ -126,27 +128,42 @@ public class Quote implements IQuoSubmit {
 
         Locator todayLocator = page.locator(TODAY.getLocator());
         int todayDayNumber = Integer.parseInt(todayLocator.textContent());
-        int tomorrowDayNumber = todayDayNumber + 1;
-        int nextDayAfterThirty = 31;
-        if (todayDayNumber == 30) {
-            Locator dayLocator = page.locator(getString(Integer.toString(nextDayAfterThirty)));
-            if (dayLocator.isVisible() || !dayLocator.isHidden()) {
-                waitForLocator(dayLocator);
-                dayLocator.click();
-            } else {
-                Locator nextMonthFirstDayLocator = page.locator(FIRST_DAY_OF_NEXT_MONTH.getLocator());
-                waitForLocator(nextMonthFirstDayLocator);
-                nextMonthFirstDayLocator.first().click();
-            }
-        }
-        if (todayDayNumber == 31) {
-            Locator nextMonthFirstDayLocator = page.locator(FIRST_DAY_OF_NEXT_MONTH.getLocator());
-            waitForLocator(nextMonthFirstDayLocator);
-            nextMonthFirstDayLocator.first().click();
+
+        if(todayDayNumber >= 16)
+        {
+            Locator nextMonth = page.locator(NEXT_MONTH_BUTTON.getLocator());
+            waitForLocator(nextMonth);
+            nextMonth.click();
+            Locator day20 = page.locator(DAY20.getLocator());
+            waitForLocator(day20);
+            day20.click();
         }
         else {
-            page.locator(getString(Integer.toString(tomorrowDayNumber))).last().click();
+            Locator day20 = page.locator(DAY20.getLocator());
+            waitForLocator(day20);
+            day20.click();
         }
+//        int tomorrowDayNumber = todayDayNumber + 1;
+//        int nextDayAfterThirty = 31;
+//        if (todayDayNumber == 27) {
+//            Locator dayLocator = page.locator(getString(Integer.toString(nextDayAfterThirty))).last();
+//            if (dayLocator.isVisible() || !dayLocator.isHidden()) {
+//                waitForLocator(dayLocator);
+//                dayLocator.click();
+//            } else {
+//                Locator nextMonthFirstDayLocator = page.locator(FIRST_DAY_OF_NEXT_MONTH.getLocator());
+//                waitForLocator(nextMonthFirstDayLocator);
+//                nextMonthFirstDayLocator.first().click();
+//            }
+//        }
+//        if (todayDayNumber == 31) {
+//            Locator nextMonthFirstDayLocator = page.locator(FIRST_DAY_OF_NEXT_MONTH.getLocator());
+//            waitForLocator(nextMonthFirstDayLocator);
+//            nextMonthFirstDayLocator.first().click();
+//        }
+//        else {
+//            page.locator(getString(Integer.toString(tomorrowDayNumber))).last().click();
+//        }
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());
         }

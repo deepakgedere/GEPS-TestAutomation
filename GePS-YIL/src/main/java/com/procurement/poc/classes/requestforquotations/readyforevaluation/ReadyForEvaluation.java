@@ -31,23 +31,23 @@ public class ReadyForEvaluation implements IReadyForEvalutation {
 
     public void readyForEvaluationButton(){
         try {
-        String buyerMailId = properties.getProperty("Buyer");
+        String buyerMailId = properties.getProperty("buyerEmail");
         iLogin.performLogin(buyerMailId);
 
-        Locator rfqNavigationBarLocator = page.locator(RFQ_NAVIGATION_BAR);
+        Locator rfqNavigationBarLocator = page.locator(RFQ_NAVIGATION_BAR.getLocator());
         waitForLocator(rfqNavigationBarLocator);
         rfqNavigationBarLocator.click();
 
-        String title = properties.getProperty("Title");
-        Locator titleLocator = page.locator(getTitle(title));
+        String title = properties.getProperty("orderTitle");
+        Locator titleLocator = page.locator(getString(title));
         waitForLocator(titleLocator);
         titleLocator.first().click();
 
-        Locator readyForEvaluationButtonLocator = page.locator(READY_FOR_EVALUATION_BUTTON);
+        Locator readyForEvaluationButtonLocator = page.locator(READY_FOR_EVALUATION_BUTTON.getLocator());
         waitForLocator(readyForEvaluationButtonLocator);
         readyForEvaluationButtonLocator.click();
 
-        Locator acceptLocator = page.locator(YES);
+        Locator acceptLocator = page.locator(YES.getLocator());
         waitForLocator(acceptLocator);
         acceptLocator.click();
 

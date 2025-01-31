@@ -4,5 +4,5 @@ import java.util.List;
 public interface IPorSendForApproval {
 
 //    List<String> getApprovers();
-    void sendForApproval();
+    String sendForApproval();
 }

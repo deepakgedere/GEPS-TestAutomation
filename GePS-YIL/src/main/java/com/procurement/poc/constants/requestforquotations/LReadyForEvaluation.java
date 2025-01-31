@@ -1,17 +1,22 @@
 package com.procurement.poc.constants.requestforquotations;
 
-public class LReadyForEvaluation {
+public enum LReadyForEvaluation {
 
-    public static final String RFQ_NAVIGATION_BAR = "//*[contains(text(), 'Request For Quotations')]";
-    public static final String READY_FOR_EVALUATION_BUTTON = "#btnReadyForEvalution";
-    public static final String YES = ".bootbox-accept";
+    RFQ_NAVIGATION_BAR("//*[contains(text(), 'Request For Quotations')]"),
+    READY_FOR_EVALUATION_BUTTON("#btnReadyForEvalution"),
+    YES(".bootbox-accept");
 
-//TODO Constructor
-    private LReadyForEvaluation(){
+
+    private final String locatorName;
+    LReadyForEvaluation(String locatorName){ this.locatorName =  locatorName;
     }
 
-    public static String getTitle(String title){
-        String title1 = "//span[contains(text(), '" + title + "')]";
-        return title1;
+    public static String getString(String string){
+    return "//span[contains(text(), '"+ string +"')]";
     }
+
+    public String getLocator(){
+    return  locatorName;
+    }
+
 }

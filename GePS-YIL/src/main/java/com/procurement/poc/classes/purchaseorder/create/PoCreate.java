@@ -31,14 +31,14 @@ public class PoCreate implements IPoCreate {
 
     public void createPO() {
         try {
-            String adminMailId = properties.getProperty("AdminId");
+            String adminMailId = properties.getProperty("adminEmail");
             iLogin.performLogin(adminMailId);
 
             Locator porNavigationBarLocator = page.locator(POR_NAVIGATION_BAR);
             waitForLocator(porNavigationBarLocator);
             porNavigationBarLocator.click();
 
-            String title = properties.getProperty("Title");
+            String title = properties.getProperty("currentTitle");
             Locator titleLocator = page.locator(getTitle(title));
             waitForLocator(titleLocator);
             titleLocator.first().click();

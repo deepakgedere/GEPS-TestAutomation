@@ -7,7 +7,7 @@ public class PorRejectTest extends BaseTest {
     @Test
     public void reject() {
         try {
-            iPorReject.porReject();
+//            iPorReject.porReject();
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());
         }

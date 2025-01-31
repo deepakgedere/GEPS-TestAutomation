@@ -6,4 +6,6 @@ public interface IPorApprove {
 //    void approverLogin(List<String> approvers);
     void approve();
     void approveMethod(String ApproverMailId, String PORReferenceNumber);
+
+    void completeApprove(String mail);
 }

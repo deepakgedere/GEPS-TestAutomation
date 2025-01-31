@@ -1,30 +1,36 @@
 package com.procurement.poc.constants.requestforquotations;
 
-public class LTeCreate {
+public enum LTeCreate {
 
-    public static final String RFQ_NAVIGATION_BAR = "//*[contains(text(), 'Request For Quotations')]";
-    public static final String TE_CREATE_BUTTON = "#btnCreateTE";
-    public static final String VENDOR_SELECT_CHECKBOX = ".border-primary";
-    public static final String CREATE_TECHNICAL_EVALUATION_BUTTON = "#btnCreate";
-    public static final String SEND_FOR_APPROVAL = "#btnSendApproval";
-    public static final String APPROVER_SELECT = ".select2-selection--single";
-    public static final String SEARCH_FIELD = ".select2-search__field";
-    public static final String SAVE_APPROVER = "#saveApproverAssign";
-    public static final String YES = ".bootbox-accept";
-    public static final String APPROVE_BUTTON = "#btnApprove";
+    RFQ_NAVIGATION_BAR("//*[contains(text(), 'Request For Quotations')]"),
+    TE_CREATE_BUTTON("#btnCreateTE"),
+    VENDOR_SELECT_CHECKBOX(".border-primary"),
+    CREATE_TECHNICAL_EVALUATION_BUTTON("#btnCreate"),
+    SEND_FOR_APPROVAL("#btnSendApproval"),
+    APPROVER_SELECT(".select2-selection--single"),
+    SEARCH_FIELD(".select2-search__field"),
+    SAVE_APPROVER("#saveApproverAssign"),
+    YES(".bootbox-accept"),
+    APPROVE_BUTTON("#btnApprove");
 
+    private final String locatorName;
+    LTeCreate(String locatorName){ this.locatorName =  locatorName; }
 
-//TODO Constructor
-    private LTeCreate(){
+    public String getLocator(){
+        return  locatorName;
     }
 
-    public static String getTitle(String title){
-        String title1 = "//*[contains(text(), '" + title + "')]";
-        return title1;
+    public static String getString(String string){
+        return "//span[contains(text(), '"+ string +"')]";
     }
 
     public static String getTeApprover(String approver){
         String approver1 = "//li[contains(text(), '"+ approver +"')]";
         return approver1;
+    }
+
+
+    public String getApi(){
+        return locatorName;
     }
 }

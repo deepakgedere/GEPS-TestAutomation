@@ -7,7 +7,7 @@ import com.poc.interfaces.login.ILogin;
 import com.poc.interfaces.logout.ILogout;
 import java.util.List;
 import java.util.Properties;
-import static com.constants.disptchnotes.LDnReturn.*;
+import static com.constants.dispatchnotes.LDnReturn.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
 
 public class DnReturn implements IDnReturn {

@@ -3,6 +3,7 @@ package com.procurement.poc.classes.purchaseorderrequest.create;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
+import com.microsoft.playwright.options.LoadState;
 import com.procurement.poc.interfaces.login.ILogin;
 import com.procurement.poc.interfaces.logout.ILogout;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorCreate;
@@ -56,9 +57,25 @@ public class PorCreate implements IPorCreate {
 //                resp -> resp.url().startsWith(LOAD_PAGE.getAPI()) && resp.status() == 200,
 //                editButtonLocator::click
 //        );
+
             Locator porCreateButtonLocator = page.locator(POR_CREATE_BUTTON.getLocator());
             waitForLocator(porCreateButtonLocator);
             porCreateButtonLocator.first().click();
+
+            Locator isPreselected = page.locator(PRESELECTED_YES.getLocator());
+            waitForLocator(isPreselected);
+            isPreselected.first().click();
+
+            page.waitForLoadState(LoadState.NETWORKIDLE);
+            Locator createButtonLocator = page.locator(CREATE_BUTTON.getLocator());
+            waitForLocator(createButtonLocator);
+            createButtonLocator.click();
+
+            Locator yesButtonLocator = page.locator(YES.getLocator());
+            waitForLocator(yesButtonLocator);
+            yesButtonLocator.click();
+
+            iLogout.performLogout();
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());
         }
@@ -84,7 +101,7 @@ public class PorCreate implements IPorCreate {
         waitForLocator(titleLocator);
         titleLocator.first().click();
 
-        Locator porCreateButtonLocator = page.locator(POR_CREATE_BUTTON.getLocator());
+        Locator porCreateButtonLocator = page.locator(CREATE.getLocator());
         waitForLocator(porCreateButtonLocator);
         porCreateButtonLocator.first().click();
         } catch (Exception error) {
@@ -130,6 +147,7 @@ public class PorCreate implements IPorCreate {
 
     public void porCreate(){
         try {
+            page.waitForLoadState(LoadState.NETWORKIDLE);
         Locator createButtonLocator = page.locator(CREATE_BUTTON.getLocator());
         waitForLocator(createButtonLocator);
         createButtonLocator.click();

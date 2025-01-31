@@ -1,71 +1,80 @@
 package com.procurement.poc;
 import com.procurement.poc.base.BaseTest;
 import com.procurement.poc.interfaces.requestforquotation.IQuoSubmit;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 
 public class NonCatalog_E2E_Flow extends BaseTest {
+
     @Test
-    public void Flow() throws InterruptedException {
-//        PRRejectSuspend();
-        PRPosititve();
+    @Parameters({"purchaseType"})
+    public void Flow() throws IOException, InterruptedException {
+        PRRejectSuspend();
+//        PRPosititve();
         RFQFlow();
-//        PORSuspendPREdit();
-        PORPositive();
+        PORSuspendPREdit();
+//        PORPositive();
+        CreatePO();
     }
 
-    void PRPosititve(){
+
+
+    void PRPosititve() throws IOException {
         iPrType.processRequisitionType();
-        iPrSendForApproval.sendForApproval();
-        iPrApprove.approve();
+        String approver = iPrSendForApproval.sendForApproval();
+        iPrApprove.completeApprove(approver);
         iPrAssign.buyerManagerAssign();
     }
-    void PRRejectSuspend() throws InterruptedException {
+    void PRRejectSuspend() throws InterruptedException, IOException {
         iPrType.processRequisitionType();
         iPrEdit.edit();
-        iPrSendForApproval.sendForApproval();
-        iPrReject.reject();
+        String approver = iPrSendForApproval.sendForApproval();
+        iPrReject.reject(approver);
         iPrEdit.edit();
-        iPrSendForApproval.sendForApproval();
-        iPrApprove.approve();
+        approver = iPrSendForApproval.sendForApproval();
+        iPrApprove.completeApprove(approver);
         iPrSuspend.suspend();
         iPrEdit.edit();
-        iPrSendForApproval.sendForApproval();
-        iPrApprove.approve();
+        approver = iPrSendForApproval.sendForApproval();
+        iPrApprove.completeApprove(approver);
         iPrAssign.buyerManagerAssign();
         iPrSuspend.suspend();
         iPrEdit.edit();
-        iPrSendForApproval.sendForApproval();
-        iPrApprove.approve();
+        approver = iPrSendForApproval.sendForApproval();
+        iPrApprove.completeApprove(approver);
         iPrAssign.buyerManagerAssign();
     }
-
-    void PORSuspendPREdit(){
-        iPorCreate.catalogPORCreate();
-        iPorSuspend.suspend();
-        iPrEdit.edit();
-        iPrSendForApproval.sendForApproval();
-        iPrApprove.approve();
-        iPrAssign.buyerManagerAssign();
-        iPorCreate.catalogPORCreate();
-        iPorSuspend.suspend();
-        iPorEdit.porEdit();
-        iPorSendForApproval.sendForApproval();
-        iPorReject.porReject();
-        iPorEdit.porEdit();
-        iPorSendForApproval.sendForApproval();
-        iPorApprove.approve();
-    }
-    void PORPositive(){
-//        iPorCreate.nonCatalogPORCreate();
-        iPorSendForApproval.sendForApproval();
-        iPorApprove.approve();
-    }
-
     void RFQFlow(){
         iRfqCreate.createRFQ();
         iRfqEdit.rfqEditMethod();
         iQuoSubmit.inviteRegisteredVendor();
         iQuoSubmit.quotationCreateAndSubmit();
+        iReadyForEvalutation.readyForEvaluationButton();
+        iTeReject.technicalEvaluationRejectMethod();
+        iTeCreate.technicalEvaluationButton();
+        iCeCreate.commercialEvaluationButton();
+    }
+    void PORSuspendPREdit() throws IOException {
+//        iPorCreate.nonCatalogPORCreate();
+//        iPorSuspend.suspend();
+        iCeCreate.commercialEvaluationButton();
+        iPorCreate.nonCatalogPORCreate();
+        String approver = iPorSendForApproval.sendForApproval();
+        iPorReject.porReject(approver);
+        iPorEdit.porEdit();
+        approver = iPorSendForApproval.sendForApproval();
+        iPorApprove.completeApprove(approver);
+    }
+    void PORPositive(){
+        iPorCreate.nonCatalogPORCreate();
+        String approver = iPorSendForApproval.sendForApproval();
+        iPorApprove.completeApprove(approver);
+    }
+
+    void CreatePO(){
+        iPoCreate.createPO();
     }
 }

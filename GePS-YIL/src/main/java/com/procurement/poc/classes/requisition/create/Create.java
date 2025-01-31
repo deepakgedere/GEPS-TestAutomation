@@ -1,9 +1,12 @@
 package com.procurement.poc.classes.requisition.create;
 
-import com.microsoft.playwright.Download;
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Response;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.LoadState;
+import com.microsoft.playwright.options.RequestOptions;
 import com.procurement.poc.interfaces.login.ILogin;
 import com.procurement.poc.interfaces.logout.ILogout;
 import com.procurement.poc.interfaces.requisitions.IPrCreate;
@@ -12,12 +15,17 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.Console;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.Properties;
+import java.util.*;
 
+import static com.factory.PlaywrightFactory.saveToPropertiesFile;
 import static com.factory.PlaywrightFactory.waitForLocator;
 import static com.procurement.poc.constants.requisitions.LPrCreate.*;
 
@@ -28,16 +36,19 @@ public class Create implements IPrCreate {
     private ILogout iLogout;
     private Properties properties;
     private String prType;
+    private ObjectMapper objectMapper;
+    private String type;
 
     private Create(){
     }
 
-//TODO Constructor
-    public Create(ILogin iLogin, Properties properties, Page page, ILogout iLogout){
+    public Create(ILogin iLogin, Properties properties, Page page, ILogout iLogout, ObjectMapper objectMapper, String type){
         this.page = page;
         this.properties = properties;
         this.iLogin = iLogin;
         this.iLogout = iLogout;
+        this.objectMapper = objectMapper;
+        this.type = type;
     }
 
     public void requesterLoginPRCreate() {
@@ -54,6 +65,9 @@ public class Create implements IPrCreate {
             Locator createButton = page.locator(CREATE_BUTTON.getLocator());
             waitForLocator(createButton);
             createButton.click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshot.png")));
+
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());
         }
@@ -61,9 +75,15 @@ public class Create implements IPrCreate {
 
     public void purchaseType() {
         try {
-            String purchaseType = properties.getProperty("purchaseType");
-            String prTypeLocator = getPrType(purchaseType);
+//            String purchaseType = properties.getProperty("purchaseType");
+            String prTypeLocator = getPrType(type);
             page.locator(prTypeLocator).click();
+
+            String catalogType = properties.getProperty("rateContractType");
+            if(catalogType.trim().contains("bop")){
+                Locator bopLocator = page.locator(BOP_RADIO_LOCATOR.getLocator());
+                bopLocator.click();
+            }
         } catch (Exception error) {
             System.out.println("What is the Error: " + error);
         }
@@ -71,19 +91,26 @@ public class Create implements IPrCreate {
 
     public void title() {
         try {
-            prType=properties.getProperty("purchaseType");
-            switch (prType) {
+            switch (type) {
                 case "catalog":
                     Locator catalogTitleLocator = page.locator(TITLE.getLocator());
                     waitForLocator(catalogTitleLocator);
-                    String catalogTitle = properties.getProperty("orderTitle");
-                    catalogTitleLocator.fill(catalogTitle + "-Catalog");
+                    Integer catCount = Integer.parseInt(properties.getProperty("catCount"));
+                    String catalogTitle = properties.getProperty("orderTitle") + "-Catalog-" + catCount;
+                    catalogTitleLocator.fill(catalogTitle);
+                    catCount++;
+                    saveToPropertiesFile("catCount",catCount.toString());
+                    saveToPropertiesFile("currentTitle",catalogTitle);
                     break;
                 case "noncatalog":
                     Locator nonCatalogTitleLocator = page.locator(TITLE.getLocator());
                     waitForLocator(nonCatalogTitleLocator);
-                    String nonCatalogTitle = properties.getProperty("orderTitle");
-                    nonCatalogTitleLocator.fill(nonCatalogTitle + "-Non Catalog");
+                    Integer ncCount = Integer.parseInt(properties.getProperty("nonCatalogCount"));
+                    String nonCatalogTitle = properties.getProperty("orderTitle")+ "-Non Catalog-" + ncCount;
+                    nonCatalogTitleLocator.fill(nonCatalogTitle);
+                    ncCount++;
+                    saveToPropertiesFile("nonCatalogCount",ncCount.toString());
+                    saveToPropertiesFile("currentTitle",nonCatalogTitle);
                     break;
 //                case "MH":
 //                    Locator mhTitleLocator = page.locator(TITLE.getLocator());
@@ -143,100 +170,122 @@ public class Create implements IPrCreate {
         depPICSelectElement.click();
     }
 
-    public void project() {
-        try {
-            Locator projectLocator = page.locator(PROJECT.getLocator());
-            waitForLocator(projectLocator);
-            projectLocator.click();
+//    public void project() {
+//        try {
+//            Locator projectLocator = page.locator(PROJECT.getLocator());
+//            waitForLocator(projectLocator);
+//            projectLocator.click();
+//
+//            String projectCodeValue = properties.getProperty("projectCode");
+//            Locator projectSearchLocator = page.locator(SEARCH.getLocator());
+//            waitForLocator(projectSearchLocator);
+//            projectSearchLocator.fill(projectCodeValue);
+//
+//            String projectSelectLocator = getString(projectCodeValue);
+//            Locator projectSelectElement = page.locator(projectSelectLocator);
+//            waitForLocator(projectSelectElement);
+//
+//            Response response = page.waitForResponse(
+//                    resp -> resp.url().startsWith(GET_WBS_API.getAPI()) && resp.status() == 200,
+//                    projectSelectElement::click
+//            );
+////            projectSelectElement.click();
+////            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+//        } catch (Exception error) {
+//            System.out.println("What is the error: " + error.getMessage());
+//        }
+//    }
+//
+//    public void wbs() {
+//        try {
+//                Locator wbsLocator = page.locator(WBS.getLocator());
+//                waitForLocator(wbsLocator);
+//                wbsLocator.click();
+//
+//                String wbsCodeValue = properties.getProperty("wbsCode");
+//                Locator wbsSearchLocator = page.locator(SEARCH.getLocator());
+//                waitForLocator(wbsSearchLocator);
+//                wbsSearchLocator.fill(wbsCodeValue);
+//
+//                String wbsSelectLocator = getString(wbsCodeValue);
+//                Locator finalWbsLocator = page.locator(wbsSelectLocator);
+//                waitForLocator(finalWbsLocator);
+//                finalWbsLocator.click();
+//
+//        } catch (Exception error) {
+//            System.out.println("What is the error: " + error.getMessage());
+//        }
+//    }
+//
 
-            String projectCodeValue = properties.getProperty("projectCode");
-            Locator projectSearchLocator = page.locator(SEARCH.getLocator());
-            waitForLocator(projectSearchLocator);
-            projectSearchLocator.fill(projectCodeValue);
+//
+//    public void wbs(List<String> wbs) {
+//        String wbsFromProperties = properties.getProperty("wbsCode");
+//        try {
+//            for(String getWbs : wbs) {
+//                if (getWbs.equals(wbsFromProperties)) {
+//                    Locator wbsLocator = page.locator(WBS.getLocator());
+//                    wbsLocator.click();
+//                    Locator wbsSearchLocator = page.locator(SEARCH.getLocator());
+//                    wbsSearchLocator.fill(wbsFromProperties);
+//                    String wbsSelectLocator = getString(wbsFromProperties);
+//                    Locator finalWbsLocator = page.locator(wbsSelectLocator);
+//                    finalWbsLocator.click();
+//                    break;
+//                }
+//            }
+//        } catch (Exception error) {
+//            System.out.println("Error in WBS Function: " + error.getMessage());
+//        }
+//    }
+//
+//
+//    public void vendor() {
+//        try {
+//            Locator vendorLocator = page.locator(VENDOR.getLocator());
+//            waitForLocator(vendorLocator);
+//            vendorLocator.click();
+//
+//            String vendorNameValue = properties.getProperty("vendorName");
+//            Locator vendorSearchLocator = page.locator(SEARCH.getLocator());
+//            waitForLocator(vendorSearchLocator);
+//            vendorSearchLocator.fill(vendorNameValue);
+//
+//            String vendorOptionLocator = getString(vendorNameValue);
+//            Locator vendorOption = page.locator(vendorOptionLocator);
+//            waitForLocator(vendorOption);
+//
+//            Response response = page.waitForResponse(
+//                    resp -> resp.url().startsWith(GET_RATE_CONTRACTS_API.getAPI()) && resp.status() == 200,
+//                    vendorOption::click
+//            );
+//
+//
+//
+//        } catch (Exception error) {
+//            System.out.println("What is the error: " + error.getMessage());
+//        }
+//    }
 
-            String projectSelectLocator = getString(projectCodeValue);
-            Locator projectSelectElement = page.locator(projectSelectLocator);
-            waitForLocator(projectSelectElement);
-
-            Response response = page.waitForResponse(
-                    resp -> resp.url().startsWith(GET_WBS_API.getAPI()) && resp.status() == 200,
-                    projectSelectElement::click
-            );
-
-
-
-        } catch (Exception error) {
-            System.out.println("What is the error: " + error.getMessage());
-        }
-    }
-
-    public void wbs() {
-        try {
-                Locator wbsLocator = page.locator(WBS.getLocator());
-                waitForLocator(wbsLocator);
-                wbsLocator.click();
-
-                String wbsCodeValue = properties.getProperty("wbsCode");
-                Locator wbsSearchLocator = page.locator(SEARCH.getLocator());
-                waitForLocator(wbsSearchLocator);
-                wbsSearchLocator.fill(wbsCodeValue);
-
-                String wbsSelectLocator = getString(wbsCodeValue);
-                Locator finalWbsLocator = page.locator(wbsSelectLocator);
-                waitForLocator(finalWbsLocator);
-                finalWbsLocator.click();
-
-        } catch (Exception error) {
-            System.out.println("What is the error: " + error.getMessage());
-        }
-    }
-
-    public void vendor() {
-        try {
-            Locator vendorLocator = page.locator(VENDOR.getLocator());
-            waitForLocator(vendorLocator);
-            vendorLocator.click();
-
-            String vendorNameValue = properties.getProperty("vendorName");
-            Locator vendorSearchLocator = page.locator(SEARCH.getLocator());
-            waitForLocator(vendorSearchLocator);
-            vendorSearchLocator.fill(vendorNameValue);
-
-            String vendorOptionLocator = getString(vendorNameValue);
-            Locator vendorOption = page.locator(vendorOptionLocator);
-            waitForLocator(vendorOption);
-
-            Response response = page.waitForResponse(
-                    resp -> resp.url().startsWith(GET_RATE_CONTRACTS_API.getAPI()) && resp.status() == 200,
-                    vendorOption::click
-            );
-
-
-
-        } catch (Exception error) {
-            System.out.println("What is the error: " + error.getMessage());
-        }
-    }
-
-    public void rateContract() {
-        try {
-            Locator rateContractLocator = page.locator(RATE_CONTRACT.getLocator());
-            waitForLocator(rateContractLocator);
-            rateContractLocator.click();
-
-            String rateContractValue = properties.getProperty("rateContract");
-            Locator rateContractSearchLocator = page.locator(SEARCH.getLocator());
-            waitForLocator(rateContractSearchLocator);
-            rateContractSearchLocator.fill(rateContractValue);
-
-            String rateContractOptionLocator = getString(rateContractValue);
-            Locator rateContractOption = page.locator(rateContractOptionLocator);
-            waitForLocator(rateContractOption);
-            rateContractOption.click();
-        } catch (Exception error) {
-            System.out.println("What is the error: " + error.getMessage());
-        }
-    }
+//    public void rateContract() {
+//        try {
+//            Locator rateContractLocator = page.locator(RATE_CONTRACT.getLocator());
+//            waitForLocator(rateContractLocator);
+//            rateContractLocator.click();
+//
+//            String rateContractValue = properties.getProperty("rateContract");
+//            Locator rateContractSearchLocator = page.locator(SEARCH.getLocator());
+//            waitForLocator(rateContractSearchLocator);
+//            rateContractSearchLocator.fill(rateContractValue);
+//
+//            String rateContractOptionLocator = getString(rateContractValue);
+//            Locator rateContractOption = page.locator(rateContractOptionLocator);
+//            waitForLocator(rateContractOption);
+//            rateContractOption.click();
+//        } catch (Exception error) {
+//            System.out.println("What is the error: " + error.getMessage());
+//        }
+//    }
 
     public void incoterm() {
         try {
@@ -293,7 +342,7 @@ public class Create implements IPrCreate {
 
     public void shippingMode() {
         try {
-            String shippingMode = prType.equals("catalog") ? CATALOG_SHIPPING_MODE.getLocator() : NON_CATALOG_MH_SHIPPING_MODE.getLocator();
+            String shippingMode = type.equals("catalog") ? CATALOG_SHIPPING_MODE.getLocator() : NON_CATALOG_MH_SHIPPING_MODE.getLocator();
 
             Locator shippingModeLocator = page.locator(shippingMode);
             waitForLocator(shippingModeLocator);
@@ -310,6 +359,29 @@ public class Create implements IPrCreate {
             Locator finalShippingModeLocator = page.locator(finalShippingMode);
             waitForLocator(finalShippingModeLocator);
             finalShippingModeLocator.click();
+        } catch (Exception error) {
+            System.out.println("Error encountered: " + error.getMessage());
+        }
+    }
+
+    public void plantCode() {
+        try {
+            String plantCode = PLANT_CODE.getLocator();
+            Locator plantCodeLocator = page.locator(plantCode);
+            waitForLocator(plantCodeLocator);
+            plantCodeLocator.click();
+
+            String getPlantCode = properties.getProperty("plantCode");
+
+            Locator plantCodeSearch = page.locator(SEARCH.getLocator());
+            waitForLocator(plantCodeSearch);
+            plantCodeSearch.fill(getPlantCode);
+
+            String finalPlantCode = getString(getPlantCode);
+
+            Locator finalPlantCodeLocator = page.locator(finalPlantCode);
+            waitForLocator(finalPlantCodeLocator);
+            finalPlantCodeLocator.click();
         } catch (Exception error) {
             System.out.println("Error encountered: " + error.getMessage());
         }
@@ -785,17 +857,17 @@ public class Create implements IPrCreate {
 
                 Cell Quantity = row.getCell(11);
                 if(Quantity == null)
-                    Quantity = row.createCell(14);
+                    Quantity = row.createCell(11);
                 Quantity.setCellValue(rowIndex * 2 + 1);
 
                 Cell Description = row.getCell(12);
                 if(Description == null)
-                    Description = row.createCell(14);
+                    Description = row.createCell(12);
                 Description.setCellValue("Desc " + (rowIndex+1));
 
                 Cell Remarks = row.getCell(13);
                 if(Remarks == null)
-                    Remarks = row.createCell(14);
+                    Remarks = row.createCell(13);
                 Remarks.setCellValue("Remarks " + (rowIndex+1));
 
 //                Cell SOItemNumber = row.getCell(14);
@@ -899,14 +971,314 @@ public class Create implements IPrCreate {
             Locator yesButtonLocator = page.locator(YES.getLocator());
             waitForLocator(yesButtonLocator);
 
-            Response response = page.waitForResponse(
-                    resp -> resp.url().startsWith(POC_DETAILS_PAGE_API.getAPI()) && resp.status() == 200,
+            Response response1 = page.waitForResponse(
+                    resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
                     yesButtonLocator::click
             );
+            //Assertion Start
+            String prStatus = JsonParser.parseString(response1.text()).getAsJsonObject().get("status").getAsString();
+            String expectedStatus = "Draft";
+            assert expectedStatus.equals(prStatus) : "Expected status to be: " + expectedStatus + ", but got: " + prStatus;
+            assert page.locator("//span[@id='status']//span").innerText().contains(prStatus) : "Expected status text to contain: " + prStatus;
+            //Assertion End
 
             iLogout.performLogout();
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());
+        }
+    }
+
+
+
+    //API Methods
+
+    public List<String> project() {
+        List<String> wbsValues = new ArrayList<>();
+        try {
+            String projectCodeValue = properties.getProperty("projectCode");
+            page.locator(PROJECT.getLocator()).click();
+            Locator projectSearchLocator = page.locator(SEARCH.getLocator());
+            projectSearchLocator.fill(projectCodeValue);
+            String projectSelectLocator = getString(projectCodeValue);
+            Locator projectSelectElement = page.locator(projectSelectLocator);
+            projectSelectElement.click();
+//            Response response = page.waitForResponse(response1 -> response1.url().equals("https://geps_hopes_yil.cormsquare.com/api/Projects/search?keyword=" + projectCodeValue),projectSelectElement::click);
+//            JsonNode abc = objectMapper.readTree(response.body());
+            APIResponse projectResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/Projects/search?keyword=" + projectCodeValue, RequestOptions.create());
+            JsonNode projectCodeJson = objectMapper.readTree(projectResponse.body());
+            JsonNode firstProjectObject = projectCodeJson.get(0);
+            String projectId = firstProjectObject.get("id").asText();
+            APIResponse wbsResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/workBreakdownStructures/search?projectid=" + projectId, RequestOptions.create());
+            JsonNode wbsCodeJson = objectMapper.readTree(wbsResponse.body());
+            for(JsonNode wbs : wbsCodeJson){
+                if(wbs.has("text")){
+                    wbsValues.add(wbs.get("text").asText());
+                }
+            }
+        } catch (Exception error) {
+            System.out.println("Error in Project Function: " + error.getMessage());
+        }
+        return wbsValues;
+    }
+
+    public void wbs(List<String> wbs) {
+        String wbsFromProperties = properties.getProperty("wbsCode");
+        try {
+            for(String getWbs : wbs) {
+                if (getWbs.equals(wbsFromProperties)) {
+                    Locator wbsLocator = page.locator(WBS.getLocator());
+                    wbsLocator.click();
+
+                    Locator wbsSearchLocator = page.locator(SEARCH.getLocator());
+                    wbsSearchLocator.fill(wbsFromProperties);
+
+                    String wbsSelectLocator = getString(wbsFromProperties);
+                    Locator finalWbsLocator = page.locator(wbsSelectLocator);
+                    finalWbsLocator.click();
+                    break;
+                }
+            }
+        } catch (Exception error) {
+            System.out.println("Error in WBS Function: " + error.getMessage());
+        }
+    }
+
+    public Map<String, String> vendor() {
+        Map<String, String> rateContractArray = new HashMap<>();
+        try {
+            String rateContractType = properties.getProperty("rateContractType");
+            String vendorNameValue = properties.getProperty("vendorName");
+            Locator vendorLocator = page.locator(VENDOR.getLocator());
+            vendorLocator.click();
+
+            APIResponse vendorApiResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/Vendors/ApprovedVendorsByKeyword?keyword=" + vendorNameValue, RequestOptions.create());
+            JsonNode vendorJson = objectMapper.readTree(vendorApiResponse.body());
+            JsonNode vendorIdJson = vendorJson.get(0);
+            int vendorId = vendorIdJson.get("id").asInt();
+
+            Locator vendorSearchLocator = page.locator(SEARCH.getLocator());
+            vendorSearchLocator.fill(vendorNameValue);
+
+            String vendorOptionLocator = getString(vendorNameValue);
+            Locator vendorOption = page.locator(vendorOptionLocator);
+            vendorOption.click();
+
+            APIResponse rateContractApiResponse;
+            if(rateContractType.toLowerCase().equals("standard")){
+                rateContractApiResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/RateContractsByVendorId?vendorId=" + vendorId + "&&itemType=" + 1, RequestOptions.create());
+            }
+            else{
+                rateContractApiResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/RateContractsByVendorId?vendorId=" + vendorId + "&&itemType=" + 0, RequestOptions.create());
+
+            }
+            JsonNode rateContractJson = objectMapper.readTree(rateContractApiResponse.body());
+
+            for(JsonNode rateContract : rateContractJson){
+                if(rateContract.has("id") && rateContract.has("text")){
+                    String rateContractId = rateContract.get("id").asText();
+                    String rateContractText = rateContract.get("text").asText();
+                    rateContractArray.put(rateContractId, rateContractText);
+                }
+            }
+        } catch (Exception error) {
+            System.out.println("Error in Vendor Function: " + error.getMessage());
+        }
+        System.out.println(rateContractArray);
+        return rateContractArray;
+    }
+
+    public List<String> rateContract(Map<String, String> rateContractArray) {
+        List<String> rateContractItems = new ArrayList<>();
+        try {
+            String rateContractValue = properties.getProperty("rateContract");
+
+            Locator rateContractLocator = page.locator(RATE_CONTRACT.getLocator());
+            rateContractLocator.click();
+
+            for(Map.Entry<String, String> rateContract : rateContractArray.entrySet()){
+                if(rateContract.getValue().trim().contains(rateContractValue)){
+                    String rateContractId = rateContract.getKey();
+                    Locator rateContractSearchLocator = page.locator(SEARCH.getLocator());
+                    rateContractSearchLocator.fill(rateContractValue);
+
+                    String rateContractOptionLocator = getString(rateContractValue);
+                    Locator rateContractOption = page.locator(rateContractOptionLocator);
+                    rateContractOption.click();
+
+                    String rateContractType = properties.getProperty("rateContractType").trim().toLowerCase();
+                    APIResponse rateContractResponse;
+
+
+
+
+
+                    if(rateContractType.contains("bop")){
+                        rateContractResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/RateContracts/bopRCItemSearch?bopRcId=" + rateContractId, RequestOptions.create());
+                        JsonNode rateContractJsonResponse = objectMapper.readTree(rateContractResponse.body());
+                        for(JsonNode Response : rateContractJsonResponse) {
+                            rateContractItems.add(Response.get("bopCode").asText());
+                        }
+                    }
+                    else{
+                         rateContractResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/RateContracts/ratecontract?rateContractId=" + rateContractId, RequestOptions.create());
+                        JsonNode rateContractJsonResponse = objectMapper.readTree(rateContractResponse.body());
+                        JsonNode itemsArray = rateContractJsonResponse.get("items");
+                        for(JsonNode item : itemsArray){
+                            if(item.has("name")){
+                                rateContractItems.add(item.get("name").asText());
+                            }
+                        }
+                    }
+                    break;
+
+//                    JsonNode rateContractJsonResponse = objectMapper.readTree(rateContractResponse.body());
+//                    JsonNode itemsArray = rateContractJsonResponse.get("items");
+//                    for(JsonNode item : itemsArray){
+//                        if(item.has("name")){
+//                            rateContractItems.add(item.get("name").asText());
+//                        }
+//                    }
+//                    break;
+                }
+            }
+        } catch (Exception error) {
+            System.out.println("Error in Rate Contract Function: " + error.getMessage());
+        }
+        return rateContractItems;
+    }
+
+    public void addLineRequisitionItemsCatalog(List<String> rateContractItems) {
+        Locator itemDropdown;
+        Locator addItemButton;
+        try {
+            Locator addLineItemButton;
+            Locator quantityField;
+            String catalogType = properties.getProperty("rateContractType");
+            if(catalogType.trim().contains("bop")){
+                addLineItemButton = page.locator(ADD_BOP2_LINE_ITEM_BUTTON.getLocator());
+                itemDropdown = page.locator(BOP_RC_ITEMS_DROPDOWN.getLocator());
+                addItemButton = page.locator(ADD_BOP_ITEM_BUTTON.getLocator());
+                quantityField = page.locator(BOP_QUANTITY.getLocator());
+            }
+            else {
+                addLineItemButton = page.locator(ADD_LINE_ITEM_BUTTON.getLocator());
+                itemDropdown = page.locator(CATALOG_ITEMS_DROPDOWN.getLocator());
+                addItemButton = page.locator(ADD_ITEM_BUTTON.getLocator());
+                quantityField = page.locator(QUANTITY.getLocator());
+            }
+            addLineItemButton.click();
+
+            for(int i = 0; i < rateContractItems.size(); i++){
+                itemDropdown.click();
+
+                Locator itemSearchBox = page.locator(SEARCH.getLocator());
+                itemSearchBox.fill(rateContractItems.get(i));
+
+                String itemDropDownOptionSelect = getString(rateContractItems.get(i));
+                Locator itemOptionSelect = page.locator(itemDropDownOptionSelect);
+                itemOptionSelect.click();
+
+                quantityField.fill(String.valueOf(i + 10));
+
+                addItemButton.click();
+
+                if(i < rateContractItems.size() - 1) {
+                        addLineItemButton.click();
+                } else {
+                    break;
+                }
+            }
+        } catch (Exception error) {
+            System.out.println("Error in Catalog Requisition Items Function: " + error.getMessage());
+        }
+    }
+
+    public void addLineRequisitionItemsNonCatalog() {
+        Locator itemDropdown;
+        Locator addItemButton;
+        String idValue;
+        List<String> inputTypes = new ArrayList<>();
+        try {
+            String[] itemNames = properties.getProperty("items").split(",");
+            String[] quantities = properties.getProperty("quantityList").split(",");
+
+            Locator addLineItemButton = page.locator(ADD_LINE_ITEM_BUTTON.getLocator());
+            addLineItemButton.click();
+
+            for (int i = 0; i < itemNames.length; i++) {
+                itemDropdown = page.locator(NON_CATALOG_ITEMS_DROPDOWN.getLocator());
+                itemDropdown.click();
+
+                Locator itemSearchBox = page.locator(SEARCH.getLocator());
+                itemSearchBox.fill(itemNames[i]);
+
+                String itemName = itemNames[i].trim();
+                String encodedName = itemName.replace(" ", "%20");
+
+                APIResponse itemSpecificationResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/ItemandCategory/search?keyword=" + encodedName + "&purchaseMethod=NonCatalog");
+                JsonNode itemSpecificationsObject = objectMapper.readTree(itemSpecificationResponse.body());
+                idValue = itemSpecificationsObject.get(0).get("id").asText();
+
+                Locator itemOption = page.locator(getString(itemNames[i]));
+                itemOption.first().click();
+
+                APIResponse getItemSpecifications = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/Items/Spefications?itemId=" + idValue);
+                JsonNode getItemSpecificationsJson = objectMapper.readTree(getItemSpecifications.body());
+
+                if(!getItemSpecificationsJson.isNull()){
+                    for(int j = 0; j < getItemSpecificationsJson.size(); j++){JsonNode item = getItemSpecificationsJson.get(j);
+                        if(item.has("inputType")) {
+                            inputTypes.add(item.get("inputType").asText());
+                        }
+                    }
+
+                    for(String inputType : inputTypes){
+                        if(inputType.equals("Text")){
+                            List<Locator> textFields = page.locator(ITEM_SPECIFICATIONS_TEXT_FIELD_LOCATORS.getLocator()).all();
+                            for(Locator textField : textFields){
+                                String idLocator = textField.getAttribute("id");
+                                Locator textFieldLocator = page.locator("#" + idLocator);
+                                if(textFieldLocator.isEnabled()){
+                                    textFieldLocator.fill("2000");
+                                }
+                            }
+                        } else if(inputType.equals("Selection")){
+                            List<Locator> selectionFields = page.locator(ITEM_SPECIFICATIONS_SELECTION_FIELD_LOCATORS.getLocator()).all();
+                            for(Locator selectionField : selectionFields){
+                                String idLocator = selectionField.getAttribute("id");
+                                Locator selectionFieldLocator = page.locator("#" + idLocator);
+                                if(selectionFieldLocator.isEnabled()){
+                                    selectionFieldLocator.click();
+                                    page.locator(ITEM_SPECIFICATIONS_SELECTION_FIELD_RESULT_LOCATOR.getLocator()).click();
+                                }
+                            }
+                        } else if(inputType.equals("CheckBox")){
+                            List<Locator> checkBoxFields = page.locator(ITEM_SPECIFICATIONS_CHECKBOX_FIELD_LOCATORS.getLocator()).all();
+                            for(Locator checkBoxField : checkBoxFields){
+                                String idLocator = checkBoxField.getAttribute("id");
+                                Locator checkBoxFieldLocator = page.locator("#" + idLocator);
+                                if(checkBoxFieldLocator.isEnabled()){
+                                    checkBoxFieldLocator.click();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Locator quantityField = page.locator(QUANTITY.getLocator());
+                quantityField.fill(quantities[i]);
+
+                addItemButton = page.locator(ADD_ITEM_BUTTON.getLocator());
+                addItemButton.click();
+
+                if(i < itemNames.length - 1) {
+                    addLineItemButton.click();
+                } else {
+                    break;
+                }
+            }
+        } catch (Exception error) {
+            System.out.println("Error in Non-Catalog Requisition Items Function: " + error.getMessage());
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.procurement.poc.classes.requisition.assign;
 import java.util.Properties;
 
+import com.google.gson.JsonParser;
 import com.microsoft.playwright.Response;
 import com.procurement.poc.interfaces.login.ILogin;
 import com.procurement.poc.interfaces.logout.ILogout;
@@ -65,10 +66,18 @@ public class Assign implements IPrAssign {
         buyerManager.first().click();
         Locator saveUser = page.locator(SAVE_USER.getLocator());
         waitForLocator(saveUser);
-        Response response = page.waitForResponse(
-                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/Procurement/Requisitions/POC_Details") && resp.status() == 200,
+
+        Response response1 = page.waitForResponse(
+                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
                 saveUser::click
         );
+        //Assertion Start
+        String prStatus = JsonParser.parseString(response1.text()).getAsJsonObject().get("status").getAsString();
+        String expectedStatus = "Assigned";
+        assert expectedStatus.equals(prStatus) : "Expected status to be: " + expectedStatus + ", but got: " + prStatus;
+        assert page.locator("//span[@id='status']//span").innerText().contains(prStatus) : "Expected status text to contain: " + prStatus;
+        //Assertion End
+
         iLogout.performLogout();
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());

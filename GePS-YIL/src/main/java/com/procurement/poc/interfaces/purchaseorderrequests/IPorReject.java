@@ -2,5 +2,5 @@ package com.procurement.poc.interfaces.purchaseorderrequests;
 
 public interface IPorReject {
 
-    void porReject();
+    void porReject(String approver);
 }

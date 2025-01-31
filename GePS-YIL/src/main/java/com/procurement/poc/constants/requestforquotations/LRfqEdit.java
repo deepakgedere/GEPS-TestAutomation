@@ -9,7 +9,7 @@ public enum LRfqEdit {
     REMARKS("Updated"),
     ACCEPT_REMARKS_POP_UP(".bootbox-accept"),
 
-    LOAD_PAGE("https://geps_hopes_yil.cormsquare.com/Procurement/RequestForQuotations/POC_Edit?uid")
+    LOAD_PAGE("https://geps_hopes_yil.cormsquare.com/api/RequestForQuotations/")
     ;
 
 

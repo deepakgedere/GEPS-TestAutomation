@@ -32,13 +32,13 @@ public class CommercialEvaluation implements ICeCreate {
 
     public void commercialEvaluationButton(){
         try {
-        String buyerMailId = properties.getProperty("Buyer");
+        String buyerMailId = properties.getProperty("buyerEmail");
         iLogin.performLogin(buyerMailId);
         Locator rfqNavigationBarLocator = page.locator(RFQ_NAVIGATION_BAR);
         waitForLocator(rfqNavigationBarLocator);
         rfqNavigationBarLocator.click();
 
-        String title = properties.getProperty("Title");
+        String title = properties.getProperty("orderTitle");
         String getTitle = getTitle(title);
         Locator titleLocator = page.locator(getTitle);
         waitForLocator(titleLocator);

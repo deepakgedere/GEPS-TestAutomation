@@ -47,7 +47,7 @@ public class Login implements ILogin {
         }
     }
 
-    public void performLogin(String emailId) {
+   public void performLogin(String emailId) {
         try {
             Locator emailLocator = page.locator(EMAIL.getLocatorsName());
             waitForLocator(emailLocator);

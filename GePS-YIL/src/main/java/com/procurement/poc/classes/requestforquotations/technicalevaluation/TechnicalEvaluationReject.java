@@ -31,43 +31,43 @@ public class TechnicalEvaluationReject implements ITeReject {
 
     public void technicalEvaluationRejectMethod(){
         try {
-        iLogin.performLogin();
+        iLogin.performLogin(properties.getProperty("requesterEmail"));
 
-        Locator rfqNavigationBarLocator = page.locator(RFQ_NAVIGATION_BAR);
+        Locator rfqNavigationBarLocator = page.locator(RFQ_NAVIGATION_BAR.getLocator());
         waitForLocator(rfqNavigationBarLocator);
         rfqNavigationBarLocator.click();
 
-        String title = properties.getProperty("Title");
+        String title = properties.getProperty("orderTitle");
         Locator titleLocator = page.locator(getTitle(title));
         waitForLocator(titleLocator);
         titleLocator.first().click();
 
-        Locator teCreateButtonLocator = page.locator(TE_CREATE_BUTTON);
+        Locator teCreateButtonLocator = page.locator(TE_CREATE_BUTTON.getLocator());
         waitForLocator(teCreateButtonLocator);
         teCreateButtonLocator.click();
 
-        Locator vendorSelectCheckboxLocator = page.locator(VENDOR_SELECT_CHECKBOX);
+        Locator vendorSelectCheckboxLocator = page.locator(VENDOR_SELECT_CHECKBOX.getLocator());
         waitForLocator(vendorSelectCheckboxLocator);
         vendorSelectCheckboxLocator.click();
 
-        Locator createTeButtonLocator = page.locator(CREATE_TECHNICAL_EVALUATION_BUTTON);
+        Locator createTeButtonLocator = page.locator(CREATE_TECHNICAL_EVALUATION_BUTTON.getLocator());
         waitForLocator(createTeButtonLocator);
         createTeButtonLocator.click();
 
-        Locator remarksAccept = page.locator(YES);
+        Locator remarksAccept = page.locator(YES.getLocator());
         waitForLocator(remarksAccept);
         remarksAccept.click();
 
-        Locator sendForApprovalLocator = page.locator(SEND_FOR_APPROVAL);
+        Locator sendForApprovalLocator = page.locator(SEND_FOR_APPROVAL.getLocator());
         waitForLocator(sendForApprovalLocator);
         sendForApprovalLocator.click();
 
-        Locator teApproverSelectLocator = page.locator(APPROVER_SELECT);
+        Locator teApproverSelectLocator = page.locator(APPROVER_SELECT.getLocator());
         waitForLocator(teApproverSelectLocator);
         teApproverSelectLocator.first().click();
 
-        String teApprover = properties.getProperty("TEApprover");
-        Locator teApproverSearchLocator = page.locator(SEARCH_FIELD);
+        String teApprover = properties.getProperty("teApprover");
+        Locator teApproverSearchLocator = page.locator(SEARCH_FIELD.getLocator());
         waitForLocator(teApproverSearchLocator);
         teApproverSearchLocator.fill(teApprover);
 
@@ -75,23 +75,23 @@ public class TechnicalEvaluationReject implements ITeReject {
         waitForLocator(getTeApproverLocator);
         getTeApproverLocator.click();
 
-        Locator saveApproverLocator = page.locator(SAVE_APPROVER);
+        Locator saveApproverLocator = page.locator(SAVE_APPROVER.getLocator());
         waitForLocator(saveApproverLocator);
         saveApproverLocator.click();
 
-        Locator acceptLocator = page.locator(YES);
+        Locator acceptLocator = page.locator(YES.getLocator());
         waitForLocator(acceptLocator);
         acceptLocator.click();
 
-        Locator rejectButtonLocator = page.locator(REJECT_BUTTON);
+        Locator rejectButtonLocator = page.locator(REJECT_BUTTON.getLocator());
         waitForLocator(rejectButtonLocator);
         rejectButtonLocator.click();
 
-        Locator remarksInputLocator = page.locator(REMARKS_INPUT_LOCATOR);
+        Locator remarksInputLocator = page.locator(REMARKS_INPUT_LOCATOR.getLocator());
         waitForLocator(remarksInputLocator);
         remarksInputLocator.fill("TE Rejected");
 
-        Locator acceptLocator1 = page.locator(YES);
+        Locator acceptLocator1 = page.locator(YES.getLocator());
         waitForLocator(acceptLocator1);
         acceptLocator1.click();
 

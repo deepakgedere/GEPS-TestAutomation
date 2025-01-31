@@ -1,4 +1,5 @@
 package com.procurement.poc.classes.requisition.reject;
+import com.google.gson.JsonParser;
 import com.microsoft.playwright.Response;
 import com.procurement.poc.interfaces.logout.ILogout;
 import com.procurement.poc.interfaces.requisitions.IPrEdit;
@@ -31,9 +32,9 @@ public class Reject implements IPrReject {
         this.iPrEdit = iPrEdit;
     }
 
-    public void reject()  {
+    public void reject(String approver)  {
         try {
-        iLogin.performLogin(properties.getProperty("Approver1"));
+        iLogin.performLogin(approver);
         String title = properties.getProperty("orderTitle");
         String getTitle = getTitle(title);
         Locator titleLocator = page.locator(getTitle);
@@ -51,13 +52,18 @@ public class Reject implements IPrReject {
         Locator yesButtonLocator = page.locator(YES.getLocator());
         waitForLocator(yesButtonLocator);
 
-        Response response = page.waitForResponse(
-                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/Procurement/Requisitions/POC_Details") && resp.status() == 200,
+        Response response1 = page.waitForResponse(
+                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
                 yesButtonLocator::click
         );
+        //Assertion Start
+        String prStatus = JsonParser.parseString(response1.text()).getAsJsonObject().get("status").getAsString();
+        String expectedStatus = "Rejected";
+        assert expectedStatus.equals(prStatus) : "Expected status to be: " + expectedStatus + ", but got: " + prStatus;
+        assert page.locator("//span[@id='status']//span").innerText().contains(prStatus) : "Expected status text to contain: " + prStatus;
+        //Assertion End
 
         iLogout.performLogout();
-//        iPrEdit.rejectEdit();
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());
         }

@@ -1,7 +1,11 @@
 package com.procurement.poc.classes.purchaseorderrequest.approve;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
+import com.microsoft.playwright.options.RequestOptions;
 import com.procurement.poc.interfaces.login.ILogin;
 import com.procurement.poc.interfaces.logout.ILogout;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorApprove;
@@ -11,22 +15,25 @@ import java.util.List;
 import java.util.Properties;
 
 import static com.procurement.poc.constants.purchaseorderrequests.LPorApprove.*;
+
 public class PorApprove implements IPorApprove {
 
     Properties properties;
     Page page;
     ILogin iLogin;
     ILogout iLogout;
+    ObjectMapper objectMapper;
 
     private PorApprove() {
     }
 
     //TODO Constructor
-    public PorApprove(ILogin iLogin, Properties properties, Page page, ILogout iLogout) {
+    public PorApprove(ILogin iLogin, Properties properties, Page page, ILogout iLogout, ObjectMapper objectMapper) {
         this.iLogin = iLogin;
         this.properties = properties;
         this.page = page;
         this.iLogout = iLogout;
+        this.objectMapper = objectMapper;
     }
 
     public void approve() {
@@ -36,9 +43,9 @@ public class PorApprove implements IPorApprove {
             for (int i = 1; i <= x; i++) {
                 approvers.add(properties.getProperty("Approver" + i));
             }
-            String PRReferenceNumber = properties.getProperty("PORReferenceNumber");
+            String PORReferenceNumber = properties.getProperty("PORReferenceNumber");
             for (String approverMailId : approvers) {
-                approveMethod(approverMailId, PRReferenceNumber);
+                approveMethod(approverMailId, PORReferenceNumber);
             }
         } catch (Exception error) {
             System.out.println(error);
@@ -57,6 +64,56 @@ public class PorApprove implements IPorApprove {
         );
         iLogout.performLogout();
     }
+
+    public void completeApprove(String email) {
+        String PORReferenceNumber = properties.getProperty("PORReferenceNumber");
+        String approverEmail = email;
+        boolean pending = true;
+        while (pending) {
+            try {
+                iLogin.performLogin(approverEmail);
+                page.locator(MY_APPROVALS.getLocator()).click();
+                String title = "PurchaseOrderRequest " + PORReferenceNumber;
+                page.locator(getString(title)).first().click();
+                String uid = getUID(page);
+
+                page.locator(APPROVE_BUTTON.getLocator()).click();
+
+                Response por = page.waitForResponse(
+                        resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/PurchaseOrderRequests/" + uid) && resp.status() == 200,
+                        page.locator(ACCEPT_BUTTON.getLocator())::click
+                );
+                JsonNode porJson = objectMapper.readTree(por.body());
+                String porId = porJson.get("id").asText();
+
+                APIResponse approvalAPI = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/Approvals?entityId=" + porId + "&approvalTypeEnum=PurchaseOrderRequest", RequestOptions.create());
+                JsonNode rootNode = objectMapper.readTree(approvalAPI.body());
+                JsonNode approvers = rootNode.path("approvers");
+                String newApproverEmail = "";
+                for (JsonNode approver : approvers) {
+                    if ("Pending".equals(approver.path("approverStatus").asText())) {
+                        newApproverEmail = approver.path("email").asText();
+                        break;
+                    }
+                }
+                if (newApproverEmail.isEmpty())
+                    pending = false;
+                else
+                    approverEmail = newApproverEmail;
+                iLogout.performLogout();
+            }
+            catch (Exception e){
+                System.out.println("Error: "+e);
+            }
+        }
+
+    }
+            public String getUID(Page page){
+                String url = page.url();
+                String[] x = url.split("=");
+                String uid = x[1];
+                return uid;
+            }
 }
 //    public void approverLogin(List<String> approvers) {
 //        try {

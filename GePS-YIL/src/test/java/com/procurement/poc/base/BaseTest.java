@@ -1,4 +1,7 @@
 package com.procurement.poc.base;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.procurement.poc.classes.msa;
+import com.procurement.poc.interfaces.IMSA;
 import com.procurement.poc.login.LoginTest;
 import com.procurement.poc.purchaseorder.create.PoCreateTest;
 import com.procurement.poc.purchaseorder.sendforapproval.PoSendForVendorTest;
@@ -68,6 +71,10 @@ import com.procurement.poc.interfaces.requestforquotation.*;
 import com.procurement.poc.interfaces.requisitions.*;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+
+import java.io.IOException;
 import java.util.Properties;
 
 public class BaseTest {
@@ -75,6 +82,7 @@ public class BaseTest {
     protected PlaywrightFactory playwrightFactory;
     protected Properties properties;
     protected Page page;
+    protected ObjectMapper objectmapper;
     protected LoginTest loginTest;
     protected ILogin iLogin;
     protected ILogout iLogout;
@@ -133,28 +141,30 @@ public class BaseTest {
     protected IPoCreate iPoCreate;
     protected PoSendForVendorTest poSendForVendorTest;
     protected IPoSendForVendor iPoSendForVendor;
+    protected IMSA iMSA;
 
 //TODO Constructor
     public BaseTest() {
     }
 
     @BeforeTest
-    public void setUp(){
+    @Parameters ("purchaseType")
+    public void setUp(@Optional("noncatalog") String purchaseType){
         try {
             playwrightFactory = new PlaywrightFactory();
             properties = playwrightFactory.initializeProperties();
             page = playwrightFactory.initializePage(properties);
-
-//TODO Requisition
+            objectmapper = new ObjectMapper();
+            iMSA = new msa();
             iLogin = new Login(properties, page);
             iLogout = new Logout(page);
             loginTest = new LoginTest();
-            iPrCreate = new Create(iLogin, properties, page, iLogout);
-            iPrType = new PurchaseRequisitionTypeHandler(iPrCreate, properties);
+            iPrCreate = new Create(iLogin, properties, page, iLogout,objectmapper, purchaseType);
+            iPrType = new PurchaseRequisitionTypeHandler(iPrCreate, properties, purchaseType);
             createTest = new CreateTest();
-            iPrSendForApproval = new SendForApproval(iLogin, properties, page, iLogout);
+            iPrSendForApproval = new SendForApproval(iLogin, properties, page, iLogout,objectmapper);
             sendForApprovalTest = new SendForApprovalTest();
-            iPrApprove = new Approve(iLogin, properties, page, iLogout);
+            iPrApprove = new Approve(iLogin, properties, page, iLogout,objectmapper);
             approveTest = new ApproveTest();
             iPrAssign = new Assign(iLogin, properties, page, iLogout);
             assignTest = new AssignTest();
@@ -196,9 +206,9 @@ public class BaseTest {
             iPorSuspend = new PorSuspend(iLogin, properties, page, iLogout, iPorEdit, iCeCreate, iPorCreate);
             porSuspendPorEditTest = new PorSuspendPorEditTest();
             porSuspendRfqEditTest = new PorSuspendRfqEditTest();
-            iPorSendForApproval = new PorSendForApproval(iLogin, properties, page, iLogout);
+            iPorSendForApproval = new PorSendForApproval(iLogin, properties, page, iLogout, objectmapper);
             porSendForApprovalTest = new PorSendForApprovalTest();
-            iPorApprove = new PorApprove(iLogin, properties, page, iLogout);
+            iPorApprove = new PorApprove(iLogin, properties, page, iLogout, objectmapper);
             porApproveTest = new PorApproveTest();
             iPorReject = new PorReject(iLogin, properties, page, iLogout, iPorEdit, iPorSendForApproval);
             porRejectTest = new PorRejectTest();

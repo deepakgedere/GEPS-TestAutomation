@@ -2,9 +2,10 @@ package com.procurement.poc.constants.requisitions;
 
 public enum LPrCreate {
 
-    SEARCH(".select2-search__field"),
+    SEARCH(".select2-search__field.select2-search__field"),
 
     CREATE_BUTTON("//button[@data-bs-toggle='modal']"),
+    BOP_RADIO_LOCATOR("#boPrcItmSelectionId"),
     TITLE ("#title"),
     SHIP_TO_YOKOGAWA ("#shipToYokogawa"),
     PROJECT ("#select2-projectId-container"),
@@ -16,6 +17,7 @@ public enum LPrCreate {
     INCOTERM ("#select2-incoterm-container"),
     SHIPPING_ADDRESS ("#select2-endusersId-container"),
     CATALOG_SHIPPING_MODE ("#select2-shippingModeId-container"),
+    PLANT_CODE("#select2-plantCodeId-container"),
     NON_CATALOG_MH_SHIPPING_MODE ("#select2-shippingmodeid-container"),
     QUOTATION_REQUIRED_BY ("//div[@id='dates']/div[label[contains(text(),'Quotation')]]/input[not(@type='hidden')]"),
     EXPECTED_PO_ISSUE ("//div[@id='dates']/div[label[contains(text(),'Issue')]]/input[not(@type='hidden')]"),
@@ -37,6 +39,7 @@ public enum LPrCreate {
     LIQUIDATED_DAMAGES ("#liquidatedamageTextId"),
     TYPE_OF_PURCHASE("#select2-typeOfPurchaseId-container"),
     ADD_LINE_ITEM_BUTTON ("#addLineRequisitionItems"),
+    ADD_BOP2_LINE_ITEM_BUTTON ("#addiLineBoprcItems"),
     CANCEL_ITEM_IMPORT("//button[(@aria-label='Close') and (contains(text(),'Cancel'))]"),
     SELECT_RATE_CONTRACT_DOWNLOAD("//table[@id='tableExportCatalog']//a"),
     SEARCH_RC_FOR_DOWNLOAD("//div[@class='dataTables_filter']//input"),
@@ -47,7 +50,9 @@ public enum LPrCreate {
     UPLOAD("#btnUpload"),
     FIRST_ITEM("//ul[@class='select2-results__options']/li[1]"),
     ADD_ITEM_BUTTON ("#saveRequisitionItem"),
+    ADD_BOP_ITEM_BUTTON("#saveBoprcItem"),
     QUANTITY("#quantity"),
+    BOP_QUANTITY("#quantityBoprc"),
     DESCRIPTION("#description"),
     NOTES ("#notes"),
     ATTACHMENTS ("#attachDocs"),
@@ -59,7 +64,17 @@ public enum LPrCreate {
     YES (".bootbox-accept"),
     BILLING_TYPE ("#select2-billingTypeId-container"),
     BILLABLE_TO_CUSTOMER("#select2-billableToCustomer-container"),
+    CATALOG_ITEMS_DROPDOWN("#select2-rcitemId-container"),
+    BOP_RC_ITEMS_DROPDOWN("#select2-boPrcItems-container"),
+    NON_CATALOG_ITEMS_DROPDOWN("#select2-itemid-container"),
 
+
+    ITEM_SPECIFICATIONS_TEXT_FIELD_LOCATORS( "//div[@id=\"itemspec-container\"]//input[@type=\"text\"]"),
+    ITEM_SPECIFICATIONS_SELECTION_FIELD_LOCATORS("//div[@id=\"itemspec-container\"]//span[@class=\"select2-selection__rendered\"]"),
+    ITEM_SPECIFICATIONS_SELECTION_FIELD_RESULT_LOCATOR("//span[@class=\"select2-results\"]//li[@class=\"select2-results__option select2-results__option--highlighted\"]"),
+    ITEM_SPECIFICATIONS_CHECKBOX_FIELD_LOCATORS("//div[@id=\"itemspec-container\"]//input[@type=\"checkbox\"]"),
+    
+    
     GET_WBS_API("https://geps_hopes_yil.cormsquare.com/api/workBreakdownStructures/search?projectid"),
     GET_RATE_CONTRACTS_API("https://geps_hopes_yil.cormsquare.com/api/RateContractsByVendorId?vendorId"),
     POC_DETAILS_PAGE_API("https://geps_hopes_yil.cormsquare.com/Procurement/Requisitions/POC_Details")

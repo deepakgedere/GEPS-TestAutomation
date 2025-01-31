@@ -5,9 +5,9 @@ import org.testng.annotations.Test;
 public class RejectTest extends BaseTest {
 
     @Test
-    public void reject() {
+    public void reject(String approver) {
         try {
-            iPrReject.reject();
+            iPrReject.reject(approver);
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());
         }

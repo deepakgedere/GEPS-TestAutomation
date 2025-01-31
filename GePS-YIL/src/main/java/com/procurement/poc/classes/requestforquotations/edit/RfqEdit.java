@@ -3,6 +3,7 @@ package com.procurement.poc.classes.requestforquotations.edit;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
+import com.microsoft.playwright.options.LoadState;
 import com.procurement.poc.interfaces.login.ILogin;
 import com.procurement.poc.interfaces.logout.ILogout;
 import com.procurement.poc.interfaces.requestforquotation.IRfqEdit;
@@ -44,6 +45,7 @@ public class RfqEdit implements IRfqEdit {
         Locator titleLocator = page.locator(getTitle(title));
         waitForLocator(titleLocator);
         titleLocator.first().click();
+        page.waitForLoadState(LoadState.NETWORKIDLE);
 
         Locator editButtonLocator = page.locator(EDIT_BUTTON.getAPI());
         waitForLocator(editButtonLocator);
@@ -60,9 +62,14 @@ public class RfqEdit implements IRfqEdit {
         waitForLocator(remarksLocator);
         remarksLocator.fill(REMARKS.getLocator());
 
+        page.waitForLoadState(LoadState.NETWORKIDLE);
         Locator acceptLocator = page.locator(ACCEPT_REMARKS_POP_UP.getLocator());
         waitForLocator(acceptLocator);
-        acceptLocator.click();
+
+        Response response1 = page.waitForResponse(
+                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/requestforquotations") && resp.status() == 200,
+                acceptLocator::click
+        );
 
         iLogout.performLogout();
         } catch (Exception error) {

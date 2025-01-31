@@ -1,6 +1,7 @@
 package com.procurement.poc.base;
 
 import com.factory.PlaywrightFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.playwright.Page;
 import com.procurement.poc.classes.login.Login;
 import com.procurement.poc.classes.logout.Logout;
@@ -26,6 +27,9 @@ public class BaseMain {
     protected PlaywrightFactory playwrightFactory;
     protected Properties properties;
     protected Page page;
+    protected ObjectMapper objectmapper;
+    protected String type;
+
     protected ILogin iLogin;
     protected ILogout iLogout;
     protected IPrType iPrType;
@@ -37,21 +41,20 @@ public class BaseMain {
     protected IPrAssign iPrAssign;
     protected IPrSuspend iPrSuspend;
 
-//TODO Constructor
     public BaseMain(){
         try {
 //            logger = LoggerFactory.getLogger(BaseMain.class);
             playwrightFactory = new PlaywrightFactory();
             properties = playwrightFactory.initializeProperties();
             page = playwrightFactory.initializePage(properties);
+            objectmapper = new ObjectMapper();
 
-//TODO Requisition
             iLogin = (com.procurement.poc.interfaces.login.ILogin) new Login(properties, page);
             iLogout = new Logout(page);
-            iPrCreate = new Create(iLogin, properties, page, iLogout);
-            iPrType = new PurchaseRequisitionTypeHandler(iPrCreate, properties);
-            iPrSendForApproval = new SendForApproval(iLogin, properties, page, iLogout);
-            iPrApprove = new Approve(iLogin, properties, page, iLogout);
+            iPrCreate = new Create(iLogin, properties, page, iLogout, objectmapper, type);
+            iPrType = new PurchaseRequisitionTypeHandler(iPrCreate, properties, type);
+            iPrSendForApproval = new SendForApproval(iLogin, properties, page, iLogout, objectmapper);
+            iPrApprove = new Approve(iLogin, properties, page, iLogout,objectmapper);
             iPrAssign = new Assign(iLogin, properties, page, iLogout);
             iPrEdit = new Edit(iLogin, properties, page, iLogout, iPrSendForApproval, iPrApprove, iPrAssign);
             iPrReject = new Reject(iLogin, properties, page, iLogout, iPrEdit);

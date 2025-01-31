@@ -36,14 +36,14 @@ public class PorReject implements IPorReject {
         this.iPorSendForApproval = iPorSendForApproval;
     }
 
-    public void porReject() {
+    public void porReject(String approver) {
         try {
 //        List<String> matchingApprovers = iPorSendForApproval.getApprovers();
 //        for(String approver : matchingApprovers){
 //            iLogin.performLogin(approver);
 //            break;
 //        }
-        iLogin.performLogin(properties.getProperty("Approver1"));
+        iLogin.performLogin(approver);
 
         Locator porNavigationBar = page.locator(POR_NAVIGATION_BAR.getLocator());
         waitForLocator(porNavigationBar);

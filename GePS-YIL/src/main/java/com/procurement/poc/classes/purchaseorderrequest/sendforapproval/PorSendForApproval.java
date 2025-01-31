@@ -1,10 +1,14 @@
 package com.procurement.poc.classes.purchaseorderrequest.sendforapproval;
 
 import com.factory.PlaywrightFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
 import com.microsoft.playwright.options.LoadState;
+import com.microsoft.playwright.options.RequestOptions;
 import com.procurement.poc.interfaces.login.ILogin;
 import com.procurement.poc.interfaces.logout.ILogout;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorSendForApproval;
@@ -15,6 +19,9 @@ import java.util.Properties;
 
 import static com.procurement.poc.constants.purchaseorderrequests.LPorSendForApproval.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
+import static com.procurement.poc.constants.requisitions.LPrSendForApproval.SEND_FOR_APPROVAL_BUTTON;
+import static com.procurement.poc.constants.requisitions.LPrSendForApproval.YES;
+import static com.procurement.poc.constants.requisitions.LPrSendForApproval.getTitle;
 
 public class PorSendForApproval implements IPorSendForApproval {
 
@@ -22,16 +29,18 @@ public class PorSendForApproval implements IPorSendForApproval {
     Page page;
     ILogin iLogin;
     ILogout iLogout;
+    ObjectMapper objectMapper;
 
     private PorSendForApproval() {
     }
 
 //TODO Constructor
-    public PorSendForApproval(ILogin iLogin, Properties properties, Page page, ILogout iLogout) {
+    public PorSendForApproval(ILogin iLogin, Properties properties, Page page, ILogout iLogout, ObjectMapper objectMapper) {
         this.iLogin = iLogin;
         this.properties = properties;
         this.page = page;
         this.iLogout = iLogout;
+        this.objectMapper = objectMapper;
     }
 
 //    public List<String> getApprovers() {
@@ -125,7 +134,64 @@ public class PorSendForApproval implements IPorSendForApproval {
 //        return matchingApprovers;
 //    }
 
-    public void sendForApproval() {
+//    public void sendForApproval() {
+//        try {
+//            String title = properties.getProperty("orderTitle");
+//            iLogin.performLogin(properties.getProperty("buyerEmail"));
+//
+//            Locator porNavigationBarLocator = page.locator(POR_NAVIGATION_BAR.getLocator());
+//            waitForLocator(porNavigationBarLocator);
+//            porNavigationBarLocator.click();
+//
+//            String getTitle = getString(title);
+//            Locator titleLocator = page.locator(getTitle);
+//            waitForLocator(titleLocator);
+//            titleLocator.first().click();
+//
+//            Locator sendForApprovalButtonLocator = page.locator(SEND_FOR_APPROVAL__BUTTON.getLocator());
+//            waitForLocator(sendForApprovalButtonLocator);
+//            sendForApprovalButtonLocator.click();
+//
+//            Locator yesButtonLocator = page.locator(YES.getLocator());
+//            waitForLocator(yesButtonLocator);
+//            Response response = page.waitForResponse(
+//                    resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Approvals") && resp.status() == 200,
+//                    yesButtonLocator::click
+//            );
+//
+//            page.waitForLoadState(LoadState.NETWORKIDLE);
+//
+//            List<String> matchingApprovers = new ArrayList<>();
+//            List<String> approvalTable = page.locator("#approvalData tbody tr td").allTextContents();
+//            String approverMailId = "@cormsquare.com";
+//            String approverMailId2 = "@sharklasers.com";
+//            String approverMailId3 = "@yokogawa.com";
+//            for (String approver : approvalTable) {
+//                if (approver.endsWith(approverMailId) || approver.endsWith(approverMailId2) || approver.endsWith(approverMailId3))
+//                {
+//                    matchingApprovers.add(approver);
+//                }
+//            }
+//            for (int i = 1; i <= matchingApprovers.size();i++){
+//                String approverEmail = matchingApprovers.get(i-1);
+//                if(i<matchingApprovers.size()) {
+//                    if (approverEmail.equals(matchingApprovers.get(i)))
+//                        matchingApprovers.remove(i);
+//                }
+//                PlaywrightFactory.saveToPropertiesFile(("Approver"+i),approverEmail);
+//                PlaywrightFactory.saveToPropertiesFile("ApproverCount", String.valueOf(matchingApprovers.size()));
+//            }
+//
+//            String PORRefereneNumber = page.locator("#referenceId").textContent();
+//            PlaywrightFactory.saveToPropertiesFile("PORReferenceNumber",PORRefereneNumber);
+//            iLogout.performLogout();
+//        } catch (Exception error) {
+//            System.out.println("What is the error: " + error.getMessage());
+//        }
+//    }
+
+    public String sendForApproval() {
+        String approverEmail = "";
         try {
             String title = properties.getProperty("orderTitle");
             iLogin.performLogin(properties.getProperty("buyerEmail"));
@@ -145,39 +211,44 @@ public class PorSendForApproval implements IPorSendForApproval {
 
             Locator yesButtonLocator = page.locator(YES.getLocator());
             waitForLocator(yesButtonLocator);
-            Response response = page.waitForResponse(
-                    resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Approvals") && resp.status() == 200,
-                    yesButtonLocator::click
-            );
-
-            page.waitForLoadState(LoadState.NETWORKIDLE);
-
-            List<String> matchingApprovers = new ArrayList<>();
-            List<String> approvalTable = page.locator("#approvalData tbody tr td").allTextContents();
-            String approverMailId = "@cormsquare.com";
-            String approverMailId2 = "@sharklasers.com";
-            String approverMailId3 = "@yokogawa.com";
-            for (String approver : approvalTable) {
-                if (approver.endsWith(approverMailId) || approver.endsWith(approverMailId2) || approver.endsWith(approverMailId3))
-                {
-                    matchingApprovers.add(approver);
-                }
-            }
-            for (int i = 1; i <= matchingApprovers.size();i++){
-                String approverEmail = matchingApprovers.get(i-1);
-                if(i<matchingApprovers.size()) {
-                    if (approverEmail.equals(matchingApprovers.get(i)))
-                        matchingApprovers.remove(i);
-                }
-                PlaywrightFactory.saveToPropertiesFile(("Approver"+i),approverEmail);
-                PlaywrightFactory.saveToPropertiesFile("ApproverCount", String.valueOf(matchingApprovers.size()));
-            }
 
             String PORRefereneNumber = page.locator("#referenceId").textContent();
             PlaywrightFactory.saveToPropertiesFile("PORReferenceNumber",PORRefereneNumber);
+
+            String uid = getUID(page);
+
+            APIResponse por = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/PurchaseOrderRequests/" + uid, RequestOptions.create());
+            JsonNode porJson = objectMapper.readTree(por.body());
+            String porId = porJson.get("id").asText();
+
+            Response approvalAPI = page.waitForResponse(
+                    resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Approvals?entityId="+porId+"&approvalTypeEnum=PurchaseOrderRequest") && resp.status() == 200,
+                    yesButtonLocator::click
+            );
+
+            JsonNode rootNode = objectMapper.readTree(approvalAPI.body());
+            JsonNode approvers = rootNode.path("approvers");
+            for (JsonNode approver : approvers) {
+                if ("Pending".equals(approver.path("approverStatus").asText())) {
+                    approverEmail = approver.path("email").asText();
+                    break;
+                }
+            }
             iLogout.performLogout();
-        } catch (Exception error) {
-            System.out.println("What is the error: " + error.getMessage());
         }
+        catch (Exception error) {
+            System.out.println(error);
+        }
+
+        return approverEmail;
+    }
+
+
+
+    public String getUID(Page page){
+        String url = page.url();
+        String[] x = url.split("=");
+        String uid = x[1];
+        return uid;
     }
 }
