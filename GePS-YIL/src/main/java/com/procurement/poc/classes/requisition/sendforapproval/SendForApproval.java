@@ -16,6 +16,8 @@ import com.procurement.poc.interfaces.login.ILogin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.factory.PlaywrightFactory.waitForLocator;
 import static com.procurement.poc.constants.requisitions.LPrSendForApproval.*;
 
@@ -131,16 +133,7 @@ public class SendForApproval implements IPrSendForApproval {
                 }
             }
 
-            Response response1 = page.waitForResponse(
-                    resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
-                    page::reload
-            );
-            //Assertion Start
-            String prStatus = JsonParser.parseString(response1.text()).getAsJsonObject().get("status").getAsString();
-            String expectedStatus = "Pending";
-            assert expectedStatus.equals(prStatus) : "Expected status to be: " + expectedStatus + ", but got: " + prStatus;
-            assert page.locator("//span[@id='status']//span").innerText().contains(prStatus) : "Expected status text to contain: " + prStatus;
-            //Assertion End
+            statusAssertion(page, page::reload,"requisition","Pending");
 
             iLogout.performLogout();
         }

@@ -9,6 +9,7 @@ import com.procurement.poc.interfaces.requisitions.IPrAssign;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.factory.PlaywrightFactory.waitForLocator;
 import static com.procurement.poc.constants.requisitions.LPrAssign.*;
 
@@ -67,18 +68,9 @@ public class Assign implements IPrAssign {
         Locator saveUser = page.locator(SAVE_USER.getLocator());
         waitForLocator(saveUser);
 
-        Response response1 = page.waitForResponse(
-                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
-                saveUser::click
-        );
-        //Assertion Start
-        String prStatus = JsonParser.parseString(response1.text()).getAsJsonObject().get("status").getAsString();
-        String expectedStatus = "Assigned";
-        assert expectedStatus.equals(prStatus) : "Expected status to be: " + expectedStatus + ", but got: " + prStatus;
-        assert page.locator("//span[@id='status']//span").innerText().contains(prStatus) : "Expected status text to contain: " + prStatus;
-        //Assertion End
+        statusAssertion(page, saveUser::click,"requisition","Assigned");
 
-        iLogout.performLogout();
+            iLogout.performLogout();
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());
         }

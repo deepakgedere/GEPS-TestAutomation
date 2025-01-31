@@ -25,8 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static com.factory.PlaywrightFactory.saveToPropertiesFile;
-import static com.factory.PlaywrightFactory.waitForLocator;
+import static com.factory.PlaywrightFactory.*;
 import static com.procurement.poc.constants.requisitions.LPrCreate.*;
 
 public class Create implements IPrCreate {
@@ -971,16 +970,7 @@ public class Create implements IPrCreate {
             Locator yesButtonLocator = page.locator(YES.getLocator());
             waitForLocator(yesButtonLocator);
 
-            Response response1 = page.waitForResponse(
-                    resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
-                    yesButtonLocator::click
-            );
-            //Assertion Start
-            String prStatus = JsonParser.parseString(response1.text()).getAsJsonObject().get("status").getAsString();
-            String expectedStatus = "Draft";
-            assert expectedStatus.equals(prStatus) : "Expected status to be: " + expectedStatus + ", but got: " + prStatus;
-            assert page.locator("//span[@id='status']//span").innerText().contains(prStatus) : "Expected status text to contain: " + prStatus;
-            //Assertion End
+            statusAssertion(page, yesButtonLocator::click,"requisition","Draft");
 
             iLogout.performLogout();
         } catch (Exception error) {

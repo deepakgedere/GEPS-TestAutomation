@@ -12,8 +12,8 @@ public class NonCatalog_E2E_Flow extends BaseTest {
     @Test
     @Parameters({"purchaseType"})
     public void Flow() throws IOException, InterruptedException {
-        PRRejectSuspend();
-//        PRPosititve();
+//        PRRejectSuspend();
+        PRPosititve();
         RFQFlow();
         PORSuspendPREdit();
 //        PORPositive();
@@ -58,8 +58,8 @@ public class NonCatalog_E2E_Flow extends BaseTest {
         iCeCreate.commercialEvaluationButton();
     }
     void PORSuspendPREdit() throws IOException {
-//        iPorCreate.nonCatalogPORCreate();
-//        iPorSuspend.suspend();
+        iPorCreate.nonCatalogPORCreate();
+        iPorSuspend.suspend();
         iCeCreate.commercialEvaluationButton();
         iPorCreate.nonCatalogPORCreate();
         String approver = iPorSendForApproval.sendForApproval();

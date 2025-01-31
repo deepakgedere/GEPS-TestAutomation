@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.requestforquotations.LQuoSubmit.*;
 
 import static com.factory.PlaywrightFactory.waitForLocator;
@@ -73,6 +74,8 @@ public class Quote implements IQuoSubmit {
         Locator vendorEmailPopUpLocator = page.locator(VENDOR_EMAIL_POP_UP.getLocator());
         waitForLocator(vendorEmailPopUpLocator);
         vendorEmailPopUpLocator.click();
+
+        statusAssertion(page,page::reload,"rfq","Floated");
 
         iLogout.performLogout();
         } catch (Exception error) {

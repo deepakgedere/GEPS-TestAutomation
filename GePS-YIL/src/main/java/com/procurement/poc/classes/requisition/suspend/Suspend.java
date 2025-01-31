@@ -9,6 +9,8 @@ import com.microsoft.playwright.Page;
 import com.procurement.poc.interfaces.login.ILogin;
 
 import java.util.Properties;
+
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.factory.PlaywrightFactory.waitForLocator;
 import static com.procurement.poc.constants.requisitions.LPrBuyerSuspend.*;
 
@@ -65,24 +67,11 @@ public class Suspend implements IPrSuspend {
 
         Locator yesButtonLocator = page.locator(YES.getLocator());
         waitForLocator(yesButtonLocator);
-        Response response = page.waitForResponse(
-                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/Procurement/Requisitions/POC_Details") && resp.status() == 200,
-                yesButtonLocator::click
-        );
+        yesButtonLocator.click();
 
+        statusAssertion(page, page::reload,"requisition","Suspended");
 
-        Response response1 = page.waitForResponse(
-                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
-                page::reload
-        );
-        //Assertion Start
-        String prStatus = JsonParser.parseString(response1.text()).getAsJsonObject().get("status").getAsString();
-        String expectedStatus = "Suspended";
-        assert expectedStatus.equals(prStatus) : "Expected status to be: " + expectedStatus + ", but got: " + prStatus;
-        assert page.locator("//span[@id='status']//span").innerText().contains(prStatus) : "Expected status text to contain: " + prStatus;
-        //Assertion End
-
-        iLogout.performLogout();
+            iLogout.performLogout();
 //        iPrEdit.buyerSuspendEdit();
         } catch (Exception error) {
             System.out.println("What is the error: " + error.getMessage());

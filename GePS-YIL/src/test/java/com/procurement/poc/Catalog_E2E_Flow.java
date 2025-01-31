@@ -31,11 +31,11 @@ public class Catalog_E2E_Flow extends BaseTest {
     void PRRejectSuspend() {
         try {
         iPrType.processRequisitionType();
-//        iPrEdit.edit();
+        iPrEdit.edit();
         String approver = iPrSendForApproval.sendForApproval();
-//        iPrReject.reject(approver);
-//        iPrEdit.edit();
-//        approver = iPrSendForApproval.sendForApproval();
+        iPrReject.reject(approver);
+        iPrEdit.edit();
+        approver = iPrSendForApproval.sendForApproval();
         iPrApprove.completeApprove(approver);
         iPrSuspend.suspend();
         iPrEdit.edit();

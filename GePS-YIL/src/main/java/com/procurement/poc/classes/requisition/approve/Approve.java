@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.requisitions.LPrApprove.*;
 
 public class Approve implements IPrApprove {
@@ -103,34 +104,13 @@ public class Approve implements IPrApprove {
                 // If no approvers are found with pending status
                 if (newApproverEmail.isEmpty()){
                     pending = false;
-
-                    Response response1 = page.waitForResponse(
-                            resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
-                            page::reload
-                    );
-                    //Assertion Start
-                    String prStatus = JsonParser.parseString(response1.text()).getAsJsonObject().get("status").getAsString();
-                    String expectedStatus = "Approved";
-                    assert expectedStatus.equals(prStatus) : "Expected status to be: " + expectedStatus + ", but got: " + prStatus;
-                    assert page.locator("//span[@id='status']//span").innerText().contains(prStatus) : "Expected status text to contain: " + prStatus;
-                    //Assertion End
-
+                    statusAssertion(page, page::reload,"requisition","Approved");
                 }
 
                 // If approver with pending status is found
                 else {
                     approverEmail = newApproverEmail;
-
-                    Response response1 = page.waitForResponse(
-                            resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
-                            page::reload
-                    );
-                    //Assertion Start
-                    String prStatus = JsonParser.parseString(response1.text()).getAsJsonObject().get("status").getAsString();
-                    String expectedStatus = "Pending";
-                    assert expectedStatus.equals(prStatus) : "Expected status to be: " + expectedStatus + ", but got: " + prStatus;
-                    assert page.locator("//span[@id='status']//span").innerText().contains(prStatus) : "Expected status text to contain: " + prStatus;
-                    //Assertion End
+                    statusAssertion(page, page::reload,"requisition","Pending");
                 }
                 iLogout.performLogout();
             }

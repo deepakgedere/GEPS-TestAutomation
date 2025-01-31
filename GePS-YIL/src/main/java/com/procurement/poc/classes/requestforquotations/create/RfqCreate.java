@@ -9,6 +9,7 @@ import com.procurement.poc.interfaces.requestforquotation.IRfqCreate;
 
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.requestforquotations.LRfqCreate.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
 
@@ -84,7 +85,8 @@ public class RfqCreate implements IRfqCreate {
 
         Locator yesButtonLocator = page.locator(YES_BUTTON.getLocator());
         waitForLocator(yesButtonLocator);
-        yesButtonLocator.click();
+
+        statusAssertion(page,yesButtonLocator::click,"rfq","Live");
 
         iLogout.performLogout();
         } catch (Exception error) {

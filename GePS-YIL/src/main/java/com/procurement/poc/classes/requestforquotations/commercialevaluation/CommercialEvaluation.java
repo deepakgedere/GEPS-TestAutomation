@@ -8,6 +8,7 @@ import com.procurement.poc.interfaces.requestforquotation.ICeCreate;
 
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.requestforquotations.LCeCreate.*;
 import static com.procurement.poc.constants.requisitions.LPrAssign.getTitle;
 import static com.factory.PlaywrightFactory.waitForLocator;
@@ -44,6 +45,8 @@ public class CommercialEvaluation implements ICeCreate {
         waitForLocator(titleLocator);
         titleLocator.first().click();
 
+        statusAssertion(page,page::reload,"rfq","TEApproved");
+
         Locator createButtonLocator = page.locator(CREATE_BUTTON);
         waitForLocator(createButtonLocator);
         createButtonLocator.click();
@@ -59,7 +62,9 @@ public class CommercialEvaluation implements ICeCreate {
 
         Locator acceptButtonLocator = page.locator(ACCEPT_BUTTON);
         waitForLocator(acceptButtonLocator);
-        acceptButtonLocator.click();
+//        acceptButtonLocator.click();
+
+        statusAssertion(page,acceptButtonLocator::click,"rfq","CESubmitted");
 
         iLogout.performLogout();
         } catch (Exception error) {

@@ -10,6 +10,7 @@ import com.procurement.poc.interfaces.requestforquotation.IRfqEdit;
 
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.requestforquotations.LRfqEdit.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
 import static com.procurement.poc.constants.requisitions.LPrCreate.POC_DETAILS_PAGE_API;
@@ -66,10 +67,7 @@ public class RfqEdit implements IRfqEdit {
         Locator acceptLocator = page.locator(ACCEPT_REMARKS_POP_UP.getLocator());
         waitForLocator(acceptLocator);
 
-        Response response1 = page.waitForResponse(
-                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/requestforquotations") && resp.status() == 200,
-                acceptLocator::click
-        );
+        statusAssertion(page,acceptLocator::click,"rfq","Live");
 
         iLogout.performLogout();
         } catch (Exception error) {

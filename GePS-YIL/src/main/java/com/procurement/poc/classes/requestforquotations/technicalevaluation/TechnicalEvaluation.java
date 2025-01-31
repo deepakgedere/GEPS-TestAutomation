@@ -9,6 +9,7 @@ import com.procurement.poc.interfaces.requestforquotation.ITeCreate;
 
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.requestforquotations.LTeCreate.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
 
