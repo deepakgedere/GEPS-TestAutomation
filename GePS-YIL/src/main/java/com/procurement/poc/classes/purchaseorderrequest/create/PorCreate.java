@@ -10,6 +10,7 @@ import com.procurement.poc.interfaces.purchaseorderrequests.IPorCreate;
 
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.purchaseorderrequests.LPorCreate.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
 
@@ -73,7 +74,8 @@ public class PorCreate implements IPorCreate {
 
             Locator yesButtonLocator = page.locator(YES.getLocator());
             waitForLocator(yesButtonLocator);
-            yesButtonLocator.click();
+
+            statusAssertion(page, yesButtonLocator::click, "por", "Draft");
 
             iLogout.performLogout();
         } catch (Exception error) {
@@ -154,7 +156,8 @@ public class PorCreate implements IPorCreate {
 
         Locator yesButtonLocator = page.locator(YES.getLocator());
         waitForLocator(yesButtonLocator);
-        yesButtonLocator.click();
+
+        statusAssertion(page, yesButtonLocator::click, "por", "Draft");
 
         iLogout.performLogout();
         } catch (Exception error) {

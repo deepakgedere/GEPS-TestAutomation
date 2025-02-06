@@ -11,6 +11,7 @@ import com.procurement.poc.interfaces.purchaseorderrequests.IPorSendForApproval;
 import java.util.List;
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.purchaseorderrequests.LPorReject.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
 
@@ -64,7 +65,9 @@ public class PorReject implements IPorReject {
 
         Locator acceptLocator = page.locator(YES.getLocator());
         waitForLocator(acceptLocator);
-        acceptLocator.click();
+//        acceptLocator.click();
+
+        statusAssertion(page, acceptLocator::click, "por", "Rejected");
 
         iLogout.performLogout();
         iPorEdit.porEdit();

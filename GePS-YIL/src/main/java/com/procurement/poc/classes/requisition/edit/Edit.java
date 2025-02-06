@@ -27,6 +27,7 @@ public class Edit implements IPrEdit {
     private IPrSendForApproval iPrSendForApproval;
     private IPrApprove iPrApprove;
     private IPrAssign iPrAssign;
+    private String url;
 
     private Edit(){
     }
@@ -40,6 +41,7 @@ public class Edit implements IPrEdit {
         this.iPrSendForApproval = iPrSendForApproval;
         this.iPrApprove = iPrApprove;
         this.iPrAssign = iPrAssign;
+        this.url = properties.getProperty("appUrl");
     }
 
     public void edit() {
@@ -51,7 +53,7 @@ public class Edit implements IPrEdit {
         Locator titleLocator = page.locator(getTitle).first();
         waitForLocator(titleLocator);
         Response response = page.waitForResponse(
-                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/") && resp.status() == 200,
+                resp -> resp.url().startsWith(url + "/api/Requisitions/") && resp.status() == 200,
                 titleLocator::click
         );
 

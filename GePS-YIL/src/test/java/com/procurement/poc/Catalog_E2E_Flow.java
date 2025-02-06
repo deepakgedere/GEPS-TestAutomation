@@ -10,10 +10,10 @@ public class Catalog_E2E_Flow extends BaseTest {
     @Parameters("purchaseType")
     public void Flow()
     {
-        PRRejectSuspend();
-//        PRPosititve();
-        PORSuspendPREdit();
-//        PORPositive();
+//        PRRejectSuspend();
+        PRPosititve();
+//        PORSuspendPREdit();
+        PORPositive();
         CreatePO();
     }
 

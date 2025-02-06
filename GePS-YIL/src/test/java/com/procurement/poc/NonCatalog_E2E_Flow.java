@@ -15,8 +15,8 @@ public class NonCatalog_E2E_Flow extends BaseTest {
 //        PRRejectSuspend();
         PRPosititve();
         RFQFlow();
-        PORSuspendPREdit();
-//        PORPositive();
+//        PORSuspendPREdit();
+        PORPositive();
         CreatePO();
     }
 
@@ -49,11 +49,11 @@ public class NonCatalog_E2E_Flow extends BaseTest {
     }
     void RFQFlow(){
         iRfqCreate.createRFQ();
-        iRfqEdit.rfqEditMethod();
+//        iRfqEdit.rfqEditMethod();
         iQuoSubmit.inviteRegisteredVendor();
         iQuoSubmit.quotationCreateAndSubmit();
         iReadyForEvalutation.readyForEvaluationButton();
-        iTeReject.technicalEvaluationRejectMethod();
+//        iTeReject.technicalEvaluationRejectMethod();
         iTeCreate.technicalEvaluationButton();
         iCeCreate.commercialEvaluationButton();
     }

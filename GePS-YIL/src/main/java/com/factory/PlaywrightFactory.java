@@ -9,6 +9,7 @@ import java.util.Properties;
 import com.enums.BrowserEnum;
 import com.google.gson.JsonParser;
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.WaitForSelectorState;
 
 public class PlaywrightFactory {
@@ -91,13 +92,13 @@ public class PlaywrightFactory {
     }
 
     public static void statusAssertion(Page page,Runnable action, String module, String expectedStatus){
-        String x = new String();
+        String x = "";
+        page.waitForLoadState(LoadState.NETWORKIDLE);
         switch(module){
-            case "requisition": { x = properties.getProperty("appUrl") + "/api/Requisitions/"; break;}
-            case "rfq": { x = properties.getProperty("appUrl") + "/api/RequestForQuotations/"; break;}
-            case "por": { x = properties.getProperty("appUrl") + "/api/PurchaseOrderRequests/"; break;}
+            case "requisition": { x = properties.getProperty("appUrl") + "/api/Requisitions/";          break;}
+            case "rfq":         { x = properties.getProperty("appUrl") + "/api/RequestForQuotations/";  break;}
+            case "por":         { x = properties.getProperty("appUrl") + "/api/PurchaseOrderRequests/"; break;}
         }
-
         final String api = x;
 
         Response response = page.waitForResponse(

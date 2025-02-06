@@ -38,7 +38,7 @@ public class Login implements ILogin {
             waitForLocator(loginButtonLocator);
 
             Response response = page.waitForResponse(
-                    resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/Identity/Account/Login") && resp.status() == 200,
+                    resp -> resp.url().startsWith(properties.getProperty("appUrl") + "/Identity/Account/Login") && resp.status() == 200,
                     loginButtonLocator::click
             );
 

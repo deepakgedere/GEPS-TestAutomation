@@ -21,6 +21,7 @@ public class RfqEdit implements IRfqEdit {
     ILogout iLogout;
     Properties properties;
     Page page;
+    private String url;
 
     private RfqEdit(){
     }
@@ -31,7 +32,8 @@ public class RfqEdit implements IRfqEdit {
         this.properties = properties;
         this.page = page;
         this.iLogout = iLogout;
-    }
+        this.url = properties.getProperty("appUrl");
+            }
 
     public void rfqEditMethod() {
         try {
@@ -51,7 +53,7 @@ public class RfqEdit implements IRfqEdit {
         Locator editButtonLocator = page.locator(EDIT_BUTTON.getAPI());
         waitForLocator(editButtonLocator);
         Response response = page.waitForResponse(
-                resp -> resp.url().startsWith(LOAD_PAGE.getAPI()) && resp.status() == 200,
+                resp -> resp.url().startsWith(url + "/api/RequestForQuotations/") && resp.status() == 200,
                 editButtonLocator::click
         );
 

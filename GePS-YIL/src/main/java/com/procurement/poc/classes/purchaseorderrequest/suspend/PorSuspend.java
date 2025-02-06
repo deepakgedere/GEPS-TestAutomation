@@ -11,6 +11,7 @@ import com.procurement.poc.interfaces.requestforquotation.ICeCreate;
 
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.purchaseorderrequests.LPorSuspend.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
 
@@ -62,7 +63,9 @@ public class PorSuspend implements IPorSuspend {
 
             Locator acceptLocator = page.locator(YES.getLocator());
             waitForLocator(acceptLocator);
-            acceptLocator.click();
+//            acceptLocator.click();
+
+            statusAssertion(page, acceptLocator::click, "por", "Suspended");
 
             iLogout.performLogout();
         } catch (Exception exception) {

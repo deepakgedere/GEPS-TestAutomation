@@ -26,6 +26,7 @@ public class Approve implements IPrApprove {
     private Properties properties;
     private Page page;
     private ObjectMapper objectMapper;
+    private String url;
 
     //TODO Constructor
     public Approve(ILogin iLogin, Properties properties, Page page, ILogout iLogout, ObjectMapper objectMapper) {
@@ -34,7 +35,8 @@ public class Approve implements IPrApprove {
         this.page = page;
         this.iLogout = iLogout;
         this.objectMapper = objectMapper;
-    }
+        this.url = properties.getProperty("appUrl");
+            }
 
     public void approve() {
         try {
@@ -59,7 +61,7 @@ public class Approve implements IPrApprove {
         page.locator(getString(title)).first().click();
         page.locator(APPROVE.getLocator()).click();
         Response response = page.waitForResponse(
-                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/Procurement/Requisitions/POC_Details") && resp.status() == 200,
+                resp -> resp.url().startsWith(url + "/Procurement/Requisitions/POC_Details") && resp.status() == 200,
                 page.locator(YES.getLocator())::click
         );
         iLogout.performLogout();
@@ -81,7 +83,7 @@ public class Approve implements IPrApprove {
 
 
                 Response requisition = page.waitForResponse(
-                        resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Requisitions/" + uid) && resp.status() == 200,
+                        resp -> resp.url().startsWith(url + "/api/Requisitions/" + uid) && resp.status() == 200,
                         page.locator(YES.getLocator())::click
                 );
 
@@ -90,7 +92,7 @@ public class Approve implements IPrApprove {
 
 
                 // Get Approver with pending status
-                APIResponse approvalAPI = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/Approvals?entityId=" + requisitionId + "&approvalTypeEnum=Requisition", RequestOptions.create());
+                APIResponse approvalAPI = page.request().fetch(url + "/api/Approvals?entityId=" + requisitionId + "&approvalTypeEnum=Requisition", RequestOptions.create());
                 JsonNode rootNode = objectMapper.readTree(approvalAPI.body());
                 JsonNode approvers = rootNode.path("approvers");
                 String newApproverEmail = "";

@@ -10,6 +10,7 @@ import com.procurement.poc.interfaces.purchaseorderrequests.IPorEdit;
 
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.purchaseorderrequests.LPorApprove.ACCEPT_BUTTON;
 import static com.procurement.poc.constants.purchaseorderrequests.LPorEdit.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
@@ -20,6 +21,7 @@ public class PorEdit implements IPorEdit {
     Page page;
     ILogin iLogin;
     ILogout iLogout;
+    private String url;
 
     private PorEdit(){
     }
@@ -30,6 +32,7 @@ public class PorEdit implements IPorEdit {
         this.properties = properties;
         this.page = page;
         this.iLogout = iLogout;
+        this.url = properties.getProperty("appUrl");
     }
 
     public void porEdit() {
@@ -63,10 +66,12 @@ public class PorEdit implements IPorEdit {
         Locator acceptLocator = page.locator(YES.getLocator());
         waitForLocator(acceptLocator);
 
-        Response response = page.waitForResponse(
-                resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/Procurement/PurchaseOrderRequests/POC_Details?uid") && resp.status() == 200,
-                acceptLocator::click
-        );
+//        Response response = page.waitForResponse(
+//                resp -> resp.url().startsWith(url + "/Procurement/PurchaseOrderRequests/POC_Details?uid") && resp.status() == 200,
+//                acceptLocator::click
+//        );
+
+        statusAssertion(page, acceptLocator::click, "por", "Draft");
 
         iLogout.performLogout();
         } catch (Exception error) {

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.purchaseorderrequests.LPorSendForApproval.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
 import static com.procurement.poc.constants.requisitions.LPrSendForApproval.SEND_FOR_APPROVAL_BUTTON;
@@ -30,7 +31,7 @@ public class PorSendForApproval implements IPorSendForApproval {
     ILogin iLogin;
     ILogout iLogout;
     ObjectMapper objectMapper;
-
+    private String url;
     private PorSendForApproval() {
     }
 
@@ -41,6 +42,7 @@ public class PorSendForApproval implements IPorSendForApproval {
         this.page = page;
         this.iLogout = iLogout;
         this.objectMapper = objectMapper;
+        this.url = properties.getProperty("appUrl");
     }
 
 //    public List<String> getApprovers() {
@@ -217,12 +219,12 @@ public class PorSendForApproval implements IPorSendForApproval {
 
             String uid = getUID(page);
 
-            APIResponse por = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/PurchaseOrderRequests/" + uid, RequestOptions.create());
+            APIResponse por = page.request().fetch(url + "/api/PurchaseOrderRequests/" + uid, RequestOptions.create());
             JsonNode porJson = objectMapper.readTree(por.body());
             String porId = porJson.get("id").asText();
 
             Response approvalAPI = page.waitForResponse(
-                    resp -> resp.url().startsWith("https://geps_hopes_yil.cormsquare.com/api/Approvals?entityId="+porId+"&approvalTypeEnum=PurchaseOrderRequest") && resp.status() == 200,
+                    resp -> resp.url().startsWith(url + "/api/Approvals?entityId="+porId+"&approvalTypeEnum=PurchaseOrderRequest") && resp.status() == 200,
                     yesButtonLocator::click
             );
 
@@ -234,6 +236,9 @@ public class PorSendForApproval implements IPorSendForApproval {
                     break;
                 }
             }
+            page.waitForLoadState(LoadState.NETWORKIDLE);
+//            statusAssertion(page, page::reload, "por", "Pending");
+            page.waitForLoadState(LoadState.NETWORKIDLE);
             iLogout.performLogout();
         }
         catch (Exception error) {

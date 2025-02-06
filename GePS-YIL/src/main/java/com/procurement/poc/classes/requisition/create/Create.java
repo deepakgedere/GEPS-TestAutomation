@@ -37,6 +37,7 @@ public class Create implements IPrCreate {
     private String prType;
     private ObjectMapper objectMapper;
     private String type;
+    private String url;
 
     private Create(){
     }
@@ -48,6 +49,7 @@ public class Create implements IPrCreate {
         this.iLogout = iLogout;
         this.objectMapper = objectMapper;
         this.type = type;
+        this.url = properties.getProperty("appUrl");
     }
 
     public void requesterLoginPRCreate() {
@@ -992,13 +994,13 @@ public class Create implements IPrCreate {
             String projectSelectLocator = getString(projectCodeValue);
             Locator projectSelectElement = page.locator(projectSelectLocator);
             projectSelectElement.click();
-//            Response response = page.waitForResponse(response1 -> response1.url().equals("https://geps_hopes_yil.cormsquare.com/api/Projects/search?keyword=" + projectCodeValue),projectSelectElement::click);
+//            Response response = page.waitForResponse(response1 -> response1.url().equals(url + "/api/Projects/search?keyword=" + projectCodeValue),projectSelectElement::click);
 //            JsonNode abc = objectMapper.readTree(response.body());
-            APIResponse projectResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/Projects/search?keyword=" + projectCodeValue, RequestOptions.create());
+            APIResponse projectResponse = page.request().fetch(url + "/api/Projects/search?keyword=" + projectCodeValue, RequestOptions.create());
             JsonNode projectCodeJson = objectMapper.readTree(projectResponse.body());
             JsonNode firstProjectObject = projectCodeJson.get(0);
             String projectId = firstProjectObject.get("id").asText();
-            APIResponse wbsResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/workBreakdownStructures/search?projectid=" + projectId, RequestOptions.create());
+            APIResponse wbsResponse = page.request().fetch(url + "/api/workBreakdownStructures/search?projectid=" + projectId, RequestOptions.create());
             JsonNode wbsCodeJson = objectMapper.readTree(wbsResponse.body());
             for(JsonNode wbs : wbsCodeJson){
                 if(wbs.has("text")){
@@ -1041,7 +1043,7 @@ public class Create implements IPrCreate {
             Locator vendorLocator = page.locator(VENDOR.getLocator());
             vendorLocator.click();
 
-            APIResponse vendorApiResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/Vendors/ApprovedVendorsByKeyword?keyword=" + vendorNameValue, RequestOptions.create());
+            APIResponse vendorApiResponse = page.request().fetch(url+"/api/Vendors/ApprovedVendorsByKeyword?keyword=" + vendorNameValue, RequestOptions.create());
             JsonNode vendorJson = objectMapper.readTree(vendorApiResponse.body());
             JsonNode vendorIdJson = vendorJson.get(0);
             int vendorId = vendorIdJson.get("id").asInt();
@@ -1055,10 +1057,10 @@ public class Create implements IPrCreate {
 
             APIResponse rateContractApiResponse;
             if(rateContractType.toLowerCase().equals("standard")){
-                rateContractApiResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/RateContractsByVendorId?vendorId=" + vendorId + "&&itemType=" + 1, RequestOptions.create());
+                rateContractApiResponse = page.request().fetch(url + "/api/RateContractsByVendorId?vendorId=" + vendorId + "&&itemType=" + 1, RequestOptions.create());
             }
             else{
-                rateContractApiResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/RateContractsByVendorId?vendorId=" + vendorId + "&&itemType=" + 0, RequestOptions.create());
+                rateContractApiResponse = page.request().fetch(url + "/api/RateContractsByVendorId?vendorId=" + vendorId + "&&itemType=" + 0, RequestOptions.create());
 
             }
             JsonNode rateContractJson = objectMapper.readTree(rateContractApiResponse.body());
@@ -1103,14 +1105,14 @@ public class Create implements IPrCreate {
 
 
                     if(rateContractType.contains("bop")){
-                        rateContractResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/RateContracts/bopRCItemSearch?bopRcId=" + rateContractId, RequestOptions.create());
+                        rateContractResponse = page.request().fetch(url + "/api/RateContracts/bopRCItemSearch?bopRcId=" + rateContractId, RequestOptions.create());
                         JsonNode rateContractJsonResponse = objectMapper.readTree(rateContractResponse.body());
                         for(JsonNode Response : rateContractJsonResponse) {
                             rateContractItems.add(Response.get("bopCode").asText());
                         }
                     }
                     else{
-                         rateContractResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/RateContracts/ratecontract?rateContractId=" + rateContractId, RequestOptions.create());
+                         rateContractResponse = page.request().fetch(url + "/api/RateContracts/ratecontract?rateContractId=" + rateContractId, RequestOptions.create());
                         JsonNode rateContractJsonResponse = objectMapper.readTree(rateContractResponse.body());
                         JsonNode itemsArray = rateContractJsonResponse.get("items");
                         for(JsonNode item : itemsArray){
@@ -1205,14 +1207,14 @@ public class Create implements IPrCreate {
                 String itemName = itemNames[i].trim();
                 String encodedName = itemName.replace(" ", "%20");
 
-                APIResponse itemSpecificationResponse = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/ItemandCategory/search?keyword=" + encodedName + "&purchaseMethod=NonCatalog");
+                APIResponse itemSpecificationResponse = page.request().fetch(url + "/api/ItemandCategory/search?keyword=" + encodedName + "&purchaseMethod=NonCatalog");
                 JsonNode itemSpecificationsObject = objectMapper.readTree(itemSpecificationResponse.body());
                 idValue = itemSpecificationsObject.get(0).get("id").asText();
 
                 Locator itemOption = page.locator(getString(itemNames[i]));
                 itemOption.first().click();
 
-                APIResponse getItemSpecifications = page.request().fetch("https://geps_hopes_yil.cormsquare.com/api/Items/Spefications?itemId=" + idValue);
+                APIResponse getItemSpecifications = page.request().fetch(url + "/api/Items/Spefications?itemId=" + idValue);
                 JsonNode getItemSpecificationsJson = objectMapper.readTree(getItemSpecifications.body());
 
                 if(!getItemSpecificationsJson.isNull()){
