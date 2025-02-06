@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="GePS-YIL" />
+        <module name="GePS-HOPES_YEA" />
+        <module name="YCA" />
+        <module name="GePS-YCA" />
+        <module name="GePS-YEA" />
+        <module name="GePS-YEF" />
+        <module name="YIL" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="YCA (1)" target="18" />
+      <module name="YCA (2)" target="18" />
+      <module name="YEF" target="18" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="GePS-YEA" options="" />
+    </option>
+  </component>
+</project>
