@@ -1,7 +1,9 @@
 package com.procurement.poc.base;
+import com.factory.Login;
+import com.factory.Logout;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.procurement.poc.classes.msa;
-import com.procurement.poc.interfaces.IMSA;
+import com.procurement.poc.classes.msa.msa;
+import com.procurement.poc.interfaces.msa.IMSA;
 import com.procurement.poc.login.LoginTest;
 import com.procurement.poc.purchaseorder.create.PoCreateTest;
 import com.procurement.poc.purchaseorder.sendforapproval.PoSendForVendorTest;
@@ -33,8 +35,6 @@ import com.procurement.poc.requisition.sendforapproval.SendForApprovalTest;
 import com.procurement.poc.requisition.suspend.SuspendTest;
 import com.factory.PlaywrightFactory;
 import com.microsoft.playwright.Page;
-import com.procurement.poc.classes.login.Login;
-import com.procurement.poc.classes.logout.Logout;
 import com.procurement.poc.classes.purchaseorder.create.PoCreate;
 import com.procurement.poc.classes.purchaseorder.sendforvendor.SendForVendor;
 import com.procurement.poc.classes.purchaseorderrequest.approvalandapprove.PorSendForApprovalAndApprove;
@@ -62,8 +62,8 @@ import com.procurement.poc.classes.requisition.reject.Reject;
 import com.procurement.poc.classes.requisition.sendforapproval.SendForApproval;
 import com.procurement.poc.classes.requisition.suspend.Suspend;
 import com.procurement.poc.classes.requisition.type.PurchaseRequisitionTypeHandler;
-import com.procurement.poc.interfaces.login.ILogin;
-import com.procurement.poc.interfaces.logout.ILogout;
+import com.interfaces.ILogin;
+import com.interfaces.ILogout;
 import com.procurement.poc.interfaces.purchaseorderrequests.*;
 import com.procurement.poc.interfaces.purchaseorders.IPoCreate;
 import com.procurement.poc.interfaces.purchaseorders.IPoSendForVendor;
@@ -74,7 +74,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class BaseTest {

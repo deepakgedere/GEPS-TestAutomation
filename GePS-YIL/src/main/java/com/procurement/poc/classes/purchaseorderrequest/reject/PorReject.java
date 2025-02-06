@@ -2,13 +2,12 @@ package com.procurement.poc.classes.purchaseorderrequest.reject;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.procurement.poc.interfaces.login.ILogin;
-import com.procurement.poc.interfaces.logout.ILogout;
+import com.interfaces.ILogin;
+import com.interfaces.ILogout;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorEdit;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorReject;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorSendForApproval;
 
-import java.util.List;
 import java.util.Properties;
 
 import static com.factory.PlaywrightFactory.statusAssertion;

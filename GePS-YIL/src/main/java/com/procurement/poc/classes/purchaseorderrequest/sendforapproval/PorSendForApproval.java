@@ -9,20 +9,15 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.RequestOptions;
-import com.procurement.poc.interfaces.login.ILogin;
-import com.procurement.poc.interfaces.logout.ILogout;
+import com.interfaces.ILogin;
+import com.interfaces.ILogout;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorSendForApproval;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
-import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.purchaseorderrequests.LPorSendForApproval.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
-import static com.procurement.poc.constants.requisitions.LPrSendForApproval.SEND_FOR_APPROVAL_BUTTON;
 import static com.procurement.poc.constants.requisitions.LPrSendForApproval.YES;
-import static com.procurement.poc.constants.requisitions.LPrSendForApproval.getTitle;
 
 public class PorSendForApproval implements IPorSendForApproval {
 

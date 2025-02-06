@@ -1,12 +1,10 @@
 package com.procurement.poc.classes.requisition.suspend;
-import com.google.gson.JsonParser;
-import com.microsoft.playwright.Response;
-import com.procurement.poc.interfaces.logout.ILogout;
+import com.interfaces.ILogout;
 import com.procurement.poc.interfaces.requisitions.IPrEdit;
 import com.procurement.poc.interfaces.requisitions.IPrSuspend;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.procurement.poc.interfaces.login.ILogin;
+import com.interfaces.ILogin;
 
 import java.util.Properties;
 

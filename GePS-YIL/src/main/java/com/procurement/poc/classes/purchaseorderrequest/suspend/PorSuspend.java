@@ -2,8 +2,8 @@ package com.procurement.poc.classes.purchaseorderrequest.suspend;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.procurement.poc.interfaces.login.ILogin;
-import com.procurement.poc.interfaces.logout.ILogout;
+import com.interfaces.ILogin;
+import com.interfaces.ILogout;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorCreate;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorEdit;
 import com.procurement.poc.interfaces.purchaseorderrequests.IPorSuspend;

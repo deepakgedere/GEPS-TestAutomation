@@ -4,8 +4,8 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
 import com.microsoft.playwright.options.LoadState;
-import com.procurement.poc.interfaces.login.ILogin;
-import com.procurement.poc.interfaces.logout.ILogout;
+import com.interfaces.ILogin;
+import com.interfaces.ILogout;
 import com.procurement.poc.interfaces.requestforquotation.IRfqEdit;
 
 import java.util.Properties;
@@ -13,7 +13,6 @@ import java.util.Properties;
 import static com.factory.PlaywrightFactory.statusAssertion;
 import static com.procurement.poc.constants.requestforquotations.LRfqEdit.*;
 import static com.factory.PlaywrightFactory.waitForLocator;
-import static com.procurement.poc.constants.requisitions.LPrCreate.POC_DETAILS_PAGE_API;
 
 public class RfqEdit implements IRfqEdit {
 

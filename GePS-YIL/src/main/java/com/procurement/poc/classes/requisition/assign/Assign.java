@@ -1,10 +1,8 @@
 package com.procurement.poc.classes.requisition.assign;
 import java.util.Properties;
 
-import com.google.gson.JsonParser;
-import com.microsoft.playwright.Response;
-import com.procurement.poc.interfaces.login.ILogin;
-import com.procurement.poc.interfaces.logout.ILogout;
+import com.interfaces.ILogin;
+import com.interfaces.ILogout;
 import com.procurement.poc.interfaces.requisitions.IPrAssign;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;

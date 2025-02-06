@@ -1,16 +1,14 @@
 package com.procurement.poc.classes.requisition.edit;
-import com.google.gson.JsonObject;
 import com.microsoft.playwright.Response;
 import com.microsoft.playwright.options.LoadState;
-import com.procurement.poc.interfaces.login.ILogin;
-import com.procurement.poc.interfaces.logout.ILogout;
+import com.interfaces.ILogin;
+import com.interfaces.ILogout;
 import com.procurement.poc.interfaces.requisitions.IPrApprove;
 import com.procurement.poc.interfaces.requisitions.IPrAssign;
 import com.procurement.poc.interfaces.requisitions.IPrEdit;
 import com.procurement.poc.interfaces.requisitions.IPrSendForApproval;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.google.gson.JsonParser;
 
 import java.util.Properties;
 
