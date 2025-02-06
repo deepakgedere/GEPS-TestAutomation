@@ -39,7 +39,7 @@ public class ReadyForEvaluation implements IReadyForEvalutation {
         waitForLocator(rfqNavigationBarLocator);
         rfqNavigationBarLocator.click();
 
-        String title = properties.getProperty("orderTitle");
+        String title = properties.getProperty("currentTitle");
         Locator titleLocator = page.locator(getString(title));
         waitForLocator(titleLocator);
 

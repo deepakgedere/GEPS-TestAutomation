@@ -190,7 +190,7 @@ public class PorSendForApproval implements IPorSendForApproval {
     public String sendForApproval() {
         String approverEmail = "";
         try {
-            String title = properties.getProperty("orderTitle");
+            String title = properties.getProperty("currentTitle");
             iLogin.performLogin(properties.getProperty("buyerEmail"));
 
             Locator porNavigationBarLocator = page.locator(POR_NAVIGATION_BAR.getLocator());

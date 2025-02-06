@@ -50,7 +50,7 @@ public class RfqCreate implements IRfqCreate {
 
     public void buyerRfqCreate() {
         try {
-        String title = properties.getProperty("orderTitle");
+        String title = properties.getProperty("currentTitle");
         Locator getTitleLocator = page.locator(getTitle(title));
         waitForLocator(getTitleLocator);
         getTitleLocator.first().click();

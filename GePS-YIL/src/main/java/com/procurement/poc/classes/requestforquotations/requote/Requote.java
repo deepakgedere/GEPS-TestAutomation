@@ -38,7 +38,7 @@ public class Requote implements IQuoRequote {
         waitForLocator(rfqNavigationBarButtonLocator);
         rfqNavigationBarButtonLocator.click();
 
-        String title = properties.getProperty("Title");
+        String title = properties.getProperty("currentTitle");
         Locator getTitleLocator = page.locator(getTitle(title));
         waitForLocator(getTitleLocator);
         getTitleLocator.first().click();

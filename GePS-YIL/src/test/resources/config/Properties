@@ -1,5 +1,5 @@
 #PoReferenceId
-#Thu Feb 06 15:47:41 IST 2025
+#Thu Feb 06 16:31:20 IST 2025
 Approver1=shashanka.s@yokogawa.com
 Approver2=manoj.yavagal@yokogawa.com
 Approver3=K.Rajagopalan@yokogawa.com
@@ -7,9 +7,9 @@ Approver4=K.Rajagopalan@yokogawa.com
 Approver5=harshit.patel@yokogawa.com
 Approver6=sajiv.nath@yokogawa.com
 ApproverCount=2
-PORReferenceNumber=2Q0024POR-01650
+PORReferenceNumber=2Q0024POR-01655
 POReferenceId=2Q0024REQ02753
-PRReferenceNumber=2Q0024REQ-02405
+PRReferenceNumber=2Q0024REQ-02421
 adminEmail=manoj.yavagal@yokogawa.com
 appUrl=https\://geps_hopes_yil.cormsquare.com
 billableToCustomer=Yes
@@ -20,12 +20,12 @@ buyerEmail=Aditi.Agarwal@yokogawa.com
 buyerGroupName=BG2
 buyerManagerEmail=chandrashekar.hegde@yokogawa.com
 caseMarking=Case Marking Details
-catCount=211
+catCount=214
 cfoEmail=cfo@cormsquare.com
 cgst=9
 checker=shashanka.s@yokogawa.com
 countryOfOrigin=India
-currentTitle=2025-Sales-Catalog-210
+currentTitle=2025-PS-Non Catalog-101
 departmentPIC=c.senthilkumar@yokogawa.com
 destinationCountry=India
 discount=20
@@ -50,7 +50,7 @@ messageToSourcing=Message To Sourcing Details
 mhItem=Engineering Services
 model=Model -
 netWeightKg=35
-nonCatalogCount=100
+nonCatalogCount=102
 oiAndTpCurrency=SGD
 orderIntake=10000
 orderTitle=2025-

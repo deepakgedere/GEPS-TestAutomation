@@ -37,7 +37,7 @@ public class Reject implements IPrReject {
     public void reject(String approver)  {
         try {
         iLogin.performLogin(approver);
-        String title = properties.getProperty("orderTitle");
+        String title = properties.getProperty("currentTitle");
         String getTitle = getTitle(title);
         Locator titleLocator = page.locator(getTitle);
         waitForLocator(titleLocator);

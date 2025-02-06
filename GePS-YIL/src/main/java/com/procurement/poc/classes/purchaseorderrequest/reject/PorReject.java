@@ -49,7 +49,7 @@ public class PorReject implements IPorReject {
         waitForLocator(porNavigationBar);
         porNavigationBar.click();
 
-        String title = properties.getProperty("orderTitle");
+        String title = properties.getProperty("currentTitle");
         Locator titleLocator = page.locator(getTitle(title));
         waitForLocator(titleLocator);
         titleLocator.first().click();

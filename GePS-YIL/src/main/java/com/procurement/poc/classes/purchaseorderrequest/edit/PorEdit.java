@@ -42,7 +42,7 @@ public class PorEdit implements IPorEdit {
         waitForLocator(porNavigationBarLocator);
         porNavigationBarLocator.click();
 
-        String title = properties.getProperty("orderTitle");
+        String title = properties.getProperty("currentTitle");
         Locator titleLocator = page.locator(getTitle(title));
         waitForLocator(titleLocator);
         titleLocator.first().click();

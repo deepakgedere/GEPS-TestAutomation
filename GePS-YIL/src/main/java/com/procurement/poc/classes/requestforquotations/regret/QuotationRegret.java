@@ -39,7 +39,7 @@ public class QuotationRegret implements IQuoRegret {
         String vendorMailId = properties.getProperty("VendorMailId");
         iLogin.performLogin(vendorMailId);
 
-        String title = properties.getProperty("Title");
+        String title = properties.getProperty("currentTitle");
         Locator titleLocator = page.locator(getTitle(title));
         waitForLocator(titleLocator);
         titleLocator.first().click();

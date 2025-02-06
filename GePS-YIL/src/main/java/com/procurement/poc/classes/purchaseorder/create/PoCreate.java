@@ -44,7 +44,6 @@ public class PoCreate implements IPoCreate {
             titleLocator.first().click();
 
             Locator createPOButtonLocator = page.locator(CREATE_PO_BUTTON);
-            waitForLocator(createPOButtonLocator);
             createPOButtonLocator.evaluate("(element) => { element.style.display = 'block'; }");
             createPOButtonLocator.click();
 

@@ -92,7 +92,7 @@ public class SendForApproval implements IPrSendForApproval {
     public String sendForApproval() {
         String approverEmail = "";
         try {
-            String title = properties.getProperty("orderTitle");
+            String title = properties.getProperty("currentTitle");
             iLogin.performLogin(properties.getProperty("requesterEmail"));
 
             String getTitle = getTitle(title);

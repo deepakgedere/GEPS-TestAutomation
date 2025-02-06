@@ -42,7 +42,7 @@ public class Assign implements IPrAssign {
     public void buyerManagerAssign() {
         try {
             buyerManagerLogin();
-        String title = properties.getProperty("orderTitle");
+        String title = properties.getProperty("currentTitle");
         String buyerMailId = properties.getProperty("buyerEmail");
         String getTitle = getTitle(title);
 

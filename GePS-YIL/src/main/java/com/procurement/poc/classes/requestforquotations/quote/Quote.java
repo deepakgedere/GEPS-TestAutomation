@@ -44,7 +44,7 @@ public class Quote implements IQuoSubmit {
         waitForLocator(rfqNavigationBar);
         rfqNavigationBar.click();
 
-        String title = properties.getProperty("orderTitle");
+        String title = properties.getProperty("currentTitle");
         Locator getTitleLocator = page.locator(getString(title));
         waitForLocator(getTitleLocator);
         getTitleLocator.first().click();

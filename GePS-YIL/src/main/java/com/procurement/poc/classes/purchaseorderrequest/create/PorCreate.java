@@ -46,7 +46,7 @@ public class PorCreate implements IPorCreate {
             waitForLocator(rfqNavigationBarLocator);
             rfqNavigationBarLocator.click();
 
-            String title = properties.getProperty("orderTitle");
+            String title = properties.getProperty("currentTitle");
             Locator titleLocator = page.locator(getString(title));
             waitForLocator(titleLocator);
             titleLocator.first().click();
@@ -97,7 +97,7 @@ public class PorCreate implements IPorCreate {
         waitForLocator(requisitionNavBarLocator);
         requisitionNavBarLocator.click();
 
-        String title = properties.getProperty("orderTitle");
+        String title = properties.getProperty("currentTitle");
         Locator titleLocator = page.locator(getString(title));
         waitForLocator(titleLocator);
         titleLocator.first().click();

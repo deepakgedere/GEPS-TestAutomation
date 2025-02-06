@@ -402,7 +402,7 @@ public class Create implements IPrCreate {
             waitForLocator(quotationRequiredByField);
             quotationRequiredByField.click();
 
-            Locator todayOption = page.locator(TODAY.getLocator());
+            Locator todayOption = page.locator(DAYS_OF_MONTH.getLocator()).last();
             waitForLocator(todayOption);
             todayOption.first().click();
         } catch (Exception error) {
@@ -416,7 +416,7 @@ public class Create implements IPrCreate {
             waitForLocator(expectedPoIssueField);
             expectedPoIssueField.click();
 
-            Locator todayOption = page.locator(TODAY.getLocator());
+            Locator todayOption = page.locator(DAYS_OF_NEXT_MONTH.getLocator()).first();
             for (int i = 0; i < todayOption.count(); i++) {
                 if (todayOption.nth(i).isVisible()) {
                     todayOption.nth(i).click(); // Click the visible element
@@ -440,7 +440,7 @@ public class Create implements IPrCreate {
             waitForLocator(expectedDeliveryField);
             expectedDeliveryField.click();
 
-            Locator todayOption = page.locator(TODAY.getLocator());
+            Locator todayOption = page.locator(DAYS_OF_NEXT_MONTH.getLocator()).last();
             for (int i = 0; i < todayOption.count(); i++) {
                 if (todayOption.nth(i).isVisible()) {
                     todayOption.nth(i).click(); // Click the visible element
@@ -1070,7 +1070,6 @@ public class Create implements IPrCreate {
         } catch (Exception error) {
             System.out.println("Error in Vendor Function: " + error.getMessage());
         }
-        System.out.println(rateContractArray);
         return rateContractArray;
     }
 
@@ -1094,10 +1093,6 @@ public class Create implements IPrCreate {
 
                     String rateContractType = properties.getProperty("rateContractType").trim().toLowerCase();
                     APIResponse rateContractResponse;
-
-
-
-
 
                     if(rateContractType.contains("bop")){
                         rateContractResponse = page.request().fetch(url + "/api/RateContracts/bopRCItemSearch?bopRcId=" + rateContractId, RequestOptions.create());
