@@ -1,5 +1,5 @@
 #PoReferenceId
-#Thu Feb 06 13:15:54 IST 2025
+#Thu Feb 06 15:45:38 IST 2025
 Approver1=shashanka.s@yokogawa.com
 Approver2=manoj.yavagal@yokogawa.com
 Approver3=K.Rajagopalan@yokogawa.com
@@ -20,12 +20,12 @@ buyerEmail=Aditi.Agarwal@yokogawa.com
 buyerGroupName=BG2
 buyerManagerEmail=chandrashekar.hegde@yokogawa.com
 caseMarking=Case Marking Details
-catCount=204
+catCount=210
 cfoEmail=cfo@cormsquare.com
 cgst=9
 checker=shashanka.s@yokogawa.com
 countryOfOrigin=India
-currentTitle=PS-rc-Catalog-203
+currentTitle=2025-Sales-Catalog-209
 departmentPIC=c.senthilkumar@yokogawa.com
 destinationCountry=India
 discount=20
@@ -50,10 +50,10 @@ messageToSourcing=Message To Sourcing Details
 mhItem=Engineering Services
 model=Model -
 netWeightKg=35
-nonCatalogCount=94
+nonCatalogCount=100
 oiAndTpCurrency=SGD
 orderIntake=10000
-orderTitle=PS-rc
+orderTitle=2025-
 packageType=Drum
 partNumber=PN -
 plantCode=Plant 1
@@ -80,7 +80,7 @@ rfqNotes=Request For Quotation Notes and Attachments
 rohsCompliance=No
 runHeadless=false
 salesOrder=2009300877
-salesReference=23
+salesReference=35
 sgst=9
 shipToYokogawa=yes
 shippingAddress=200315579 - SATNA SMART CITY DEVELOPMENT LIMITED

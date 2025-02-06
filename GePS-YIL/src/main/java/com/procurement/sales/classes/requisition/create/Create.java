@@ -10,10 +10,10 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.RequestOptions;
 import com.procurement.sales.interfaces.requisitions.IPrCreate;
 
+import java.nio.file.Paths;
 import java.util.*;
 
-import static com.factory.PlaywrightFactory.saveToPropertiesFile;
-import static com.factory.PlaywrightFactory.waitForLocator;
+import static com.factory.PlaywrightFactory.*;
 import static com.procurement.sales.constants.requisitions.LPrCreate.*;
 
 public class Create implements IPrCreate {
@@ -74,7 +74,7 @@ public class Create implements IPrCreate {
                     Locator catalogTitleLocator = page.locator(TITLE.getLocator());
                     waitForLocator(catalogTitleLocator);
                     Integer catCount = Integer.parseInt(properties.getProperty("catCount"));
-                    String catalogTitle = properties.getProperty("orderTitle") + "-Catalog-" + catCount;
+                    String catalogTitle = properties.getProperty("orderTitle") + "Sales-Catalog-" + catCount;
                     catalogTitleLocator.fill(catalogTitle);
                     catCount++;
                     saveToPropertiesFile("catCount",catCount.toString());
@@ -84,7 +84,7 @@ public class Create implements IPrCreate {
                     Locator nonCatalogTitleLocator = page.locator(TITLE.getLocator());
                     waitForLocator(nonCatalogTitleLocator);
                     Integer ncCount = Integer.parseInt(properties.getProperty("nonCatalogCount"));
-                    String nonCatalogTitle = properties.getProperty("orderTitle")+ "-Non Catalog-" + ncCount;
+                    String nonCatalogTitle = properties.getProperty("orderTitle")+ "Sales-Non Catalog-" + ncCount;
                     nonCatalogTitleLocator.fill(nonCatalogTitle);
                     ncCount++;
                     saveToPropertiesFile("nonCatalogCount",ncCount.toString());
@@ -313,6 +313,96 @@ public class Create implements IPrCreate {
         }
     }
 
+    public void addLineRequisitionItemsNonCatalog() {
+        Locator itemDropdown;
+        Locator addItemButton;
+        String idValue;
+        List<String> inputTypes = new ArrayList<>();
+        try {
+            String[] itemNames = properties.getProperty("items").split(",");
+            String[] quantities = properties.getProperty("quantityList").split(",");
+
+            Locator addLineItemButton = page.locator(ADD_LINE_ITEM_BUTTON.getLocator());
+            addLineItemButton.click();
+
+            for (int i = 0; i < itemNames.length; i++) {
+                itemDropdown = page.locator(NON_CATALOG_ITEMS_DROPDOWN.getLocator());
+                itemDropdown.click();
+
+                Locator itemSearchBox = page.locator(SEARCH.getLocator());
+                itemSearchBox.fill(itemNames[i]);
+
+                String itemName = itemNames[i].trim();
+                String encodedName = itemName.replace(" ", "%20");
+
+                APIResponse itemSpecificationResponse = page.request().fetch(url + "/api/ItemandCategory/search?keyword=" + encodedName + "&purchaseMethod=NonCatalog");
+                JsonNode itemSpecificationsObject = objectMapper.readTree(itemSpecificationResponse.body());
+                idValue = itemSpecificationsObject.get(0).get("id").asText();
+
+                Locator itemOption = page.locator(getString(itemNames[i]));
+                itemOption.first().click();
+
+                APIResponse getItemSpecifications = page.request().fetch(url + "/api/Items/Spefications?itemId=" + idValue);
+                JsonNode getItemSpecificationsJson = objectMapper.readTree(getItemSpecifications.body());
+
+                if(!getItemSpecificationsJson.isNull()){
+                    for(int j = 0; j < getItemSpecificationsJson.size(); j++){JsonNode item = getItemSpecificationsJson.get(j);
+                        if(item.has("inputType")) {
+                            inputTypes.add(item.get("inputType").asText());
+                        }
+                    }
+
+                    for(String inputType : inputTypes){
+                        if(inputType.equals("Text")){
+                            List<Locator> textFields = page.locator(ITEM_SPECIFICATIONS_TEXT_FIELD_LOCATORS.getLocator()).all();
+                            for(Locator textField : textFields){
+                                String idLocator = textField.getAttribute("id");
+                                Locator textFieldLocator = page.locator("#" + idLocator);
+                                if(textFieldLocator.isEnabled()){
+                                    textFieldLocator.fill("2000");
+                                }
+                            }
+                        } else if(inputType.equals("Selection")){
+                            List<Locator> selectionFields = page.locator(ITEM_SPECIFICATIONS_SELECTION_FIELD_LOCATORS.getLocator()).all();
+                            for(Locator selectionField : selectionFields){
+                                String idLocator = selectionField.getAttribute("id");
+                                Locator selectionFieldLocator = page.locator("#" + idLocator);
+                                if(selectionFieldLocator.isEnabled()){
+                                    selectionFieldLocator.click();
+                                    page.locator(ITEM_SPECIFICATIONS_SELECTION_FIELD_RESULT_LOCATOR.getLocator()).click();
+                                }
+                            }
+                        } else if(inputType.equals("CheckBox")){
+                            List<Locator> checkBoxFields = page.locator(ITEM_SPECIFICATIONS_CHECKBOX_FIELD_LOCATORS.getLocator()).all();
+                            for(Locator checkBoxField : checkBoxFields){
+                                String idLocator = checkBoxField.getAttribute("id");
+                                Locator checkBoxFieldLocator = page.locator("#" + idLocator);
+                                if(checkBoxFieldLocator.isEnabled()){
+                                    checkBoxFieldLocator.click();
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Locator quantityField = page.locator(QUANTITY.getLocator());
+                quantityField.fill(quantities[i]);
+
+                addItemButton = page.locator(ADD_ITEM_BUTTON.getLocator());
+                addItemButton.click();
+
+                if(i < itemNames.length - 1) {
+                    addLineItemButton.click();
+                } else {
+                    break;
+                }
+            }
+        } catch (Exception error) {
+            System.out.println("Error in Non-Catalog Requisition Items Function: " + error.getMessage());
+        }
+    }
+
+
     public void incoterm() {
         try {
             Locator incotermLocator = page.locator(INCOTERM.getLocator());
@@ -421,7 +511,7 @@ public class Create implements IPrCreate {
             waitForLocator(quotationRequiredByField);
             quotationRequiredByField.click();
 
-            Locator todayOption = page.locator(TODAY.getLocator());
+            Locator todayOption = page.locator(DAYS_OF_MONTH.getLocator()).last();
             waitForLocator(todayOption);
             todayOption.first().click();
         } catch (Exception error) {
@@ -439,7 +529,7 @@ public class Create implements IPrCreate {
             waitForLocator(expectedPoIssueField);
             expectedPoIssueField.click();
 
-            Locator todayOption = page.locator(TODAY.getLocator());
+            Locator todayOption = page.locator(DAYS_OF_NEXT_MONTH.getLocator()).first();
             for (int i = 0; i < todayOption.count(); i++) {
                 if (todayOption.nth(i).isVisible()) {
                     todayOption.nth(i).click(); // Click the visible element
@@ -463,7 +553,7 @@ public class Create implements IPrCreate {
             waitForLocator(expectedDeliveryField);
             expectedDeliveryField.click();
 
-            Locator todayOption = page.locator(TODAY.getLocator());
+            Locator todayOption = page.locator(DAYS_OF_NEXT_MONTH.getLocator()).last();
             for (int i = 0; i < todayOption.count(); i++) {
                 if (todayOption.nth(i).isVisible()) {
                     todayOption.nth(i).click(); // Click the visible element
@@ -545,4 +635,78 @@ public class Create implements IPrCreate {
             System.out.println("Error encountered: " + error.getMessage());
         }
     }
+
+    public void notes() {
+        try {
+            String notesText = properties.getProperty("requisitionNotes");
+            Locator notesField = page.locator(NOTES.getLocator());
+            waitForLocator(notesField);
+            notesField.fill(notesText);
+        } catch (Exception error) {
+            System.out.println("What is the error: " + error.getMessage());
+        }
+    }
+
+    public void attachments(){
+        try {
+//TODO Internal Attachment
+            Locator attachmentsButton = page.locator(ATTACHMENTS.getLocator());
+            waitForLocator(attachmentsButton);
+            attachmentsButton.click();
+
+            Locator internalFileUpload = page.locator(FILE_UPLOAD.getLocator());
+            waitForLocator(internalFileUpload);
+            internalFileUpload.setInputFiles(Paths.get(properties.getProperty("internalFilePath")));
+
+            Locator attachInternalFileButton = page.locator(ATTACH_FILE_BUTTON.getLocator());
+            waitForLocator(attachInternalFileButton);
+            attachInternalFileButton.click();
+
+            Locator continueButton = page.locator(CONTINUE_BUTTON.getLocator());
+            waitForLocator(continueButton);
+            continueButton.click();
+
+//TODO External Attachment
+            Locator externalAttachmentsButton = page.locator(ATTACHMENTS.getLocator());
+            waitForLocator(externalAttachmentsButton);
+            externalAttachmentsButton.click();
+
+            Locator externalFileUpload = page.locator(FILE_UPLOAD.getLocator());
+            waitForLocator(externalFileUpload);
+            externalFileUpload.setInputFiles(Paths.get(properties.getProperty("externalFilePath")));
+
+            Locator externalRadioButton = page.locator(EXTERNAL_RADIO_BUTTON.getLocator());
+            waitForLocator(externalRadioButton);
+            externalRadioButton.click();
+
+            Locator attachExternalFileButton = page.locator(ATTACH_FILE_BUTTON.getLocator());
+            waitForLocator(attachExternalFileButton);
+            attachExternalFileButton.click();
+
+//            Locator continueButton = page.locator(CONTINUE_BUTTON);
+            waitForLocator(continueButton);
+            continueButton.click();
+
+        } catch (Exception error) {
+            System.out.println("What is the error: " + error.getMessage());
+        }
+    }
+
+    public void prCreate() {
+        try {
+            Locator createDraftButtonLocator = page.locator(CREATE_DRAFT_BUTTON.getLocator());
+            waitForLocator(createDraftButtonLocator);
+            createDraftButtonLocator.click();
+
+            Locator yesButtonLocator = page.locator(YES.getLocator());
+            waitForLocator(yesButtonLocator);
+
+            statusAssertion(page, yesButtonLocator::click,"salesRequisition","Approved");
+
+            iLogout.performLogout();
+        } catch (Exception error) {
+            System.out.println("What is the error: " + error.getMessage());
+        }
+    }
+
 }

@@ -26,6 +26,8 @@ public enum LPrCreate {
     EXPECTED_PO_ISSUE_LABEL("//div[@id='dates']/div[label[contains(text(),'Issue')]]/label"),
     EXPECTED_DELIVERY ("//div[@id='dates']/div[label[contains(text(),'Delivery')]]/input[not(@type='hidden')]"),
     TODAY ("//span[@class='flatpickr-day today']"),
+    DAYS_OF_MONTH("//div[contains(@class,'open')]//div[@class='dayContainer']/span[not(contains(@class,'next'))]"),
+    DAYS_OF_NEXT_MONTH("//div[contains(@class,'open')]//div[@class='dayContainer']/span[contains(@class,'next')]"),
     BUYER_GROUP ("//div[label[contains(text(),'Buyer Group')]]//span[@class='select2-selection__rendered']"),
     CHECKER ("#select2-checkerId-container"),
     ROHS_COMPLIANCE_NON_CAT ("#rohsnotcomplianceid"),

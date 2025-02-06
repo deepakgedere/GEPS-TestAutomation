@@ -92,7 +92,7 @@ public class Create implements IPrCreate {
                     Locator catalogTitleLocator = page.locator(TITLE.getLocator());
                     waitForLocator(catalogTitleLocator);
                     Integer catCount = Integer.parseInt(properties.getProperty("catCount"));
-                    String catalogTitle = properties.getProperty("orderTitle") + "-Catalog-" + catCount;
+                    String catalogTitle = properties.getProperty("orderTitle") + "PS-Catalog-" + catCount;
                     catalogTitleLocator.fill(catalogTitle);
                     catCount++;
                     saveToPropertiesFile("catCount",catCount.toString());
@@ -102,7 +102,7 @@ public class Create implements IPrCreate {
                     Locator nonCatalogTitleLocator = page.locator(TITLE.getLocator());
                     waitForLocator(nonCatalogTitleLocator);
                     Integer ncCount = Integer.parseInt(properties.getProperty("nonCatalogCount"));
-                    String nonCatalogTitle = properties.getProperty("orderTitle")+ "-Non Catalog-" + ncCount;
+                    String nonCatalogTitle = properties.getProperty("orderTitle")+ "PS-Non Catalog-" + ncCount;
                     nonCatalogTitleLocator.fill(nonCatalogTitle);
                     ncCount++;
                     saveToPropertiesFile("nonCatalogCount",ncCount.toString());

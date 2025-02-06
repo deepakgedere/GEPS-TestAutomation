@@ -47,6 +47,10 @@ public class PurchaseRequisitionTypeHandler implements IPrType {
                     iPrCreate.inspectionRequired();
                     iPrCreate.orderIntake();
                     iPrCreate.targetPrice();
+                    iPrCreate.addLineRequisitionItemsCatalog(y);
+                    iPrCreate.notes();
+                    iPrCreate.attachments();
+                    iPrCreate.prCreate();
                     break;
                 case "noncatalog":
                     iPrCreate.requesterLoginPRCreate();
@@ -70,6 +74,10 @@ public class PurchaseRequisitionTypeHandler implements IPrType {
                     iPrCreate.inspectionRequired();
                     iPrCreate.orderIntake();
                     iPrCreate.targetPrice();
+                    iPrCreate.addLineRequisitionItemsNonCatalog();
+                    iPrCreate.notes();
+                    iPrCreate.attachments();
+                    iPrCreate.prCreate();
                     break;
                 default:
                     System.out.println("Enter Proper Purchase Type");

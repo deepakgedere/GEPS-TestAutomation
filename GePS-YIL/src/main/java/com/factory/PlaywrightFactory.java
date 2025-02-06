@@ -95,9 +95,10 @@ public class PlaywrightFactory {
         String x = "";
         page.waitForLoadState(LoadState.NETWORKIDLE);
         switch(module){
-            case "requisition": { x = properties.getProperty("appUrl") + "/api/Requisitions/";          break;}
-            case "rfq":         { x = properties.getProperty("appUrl") + "/api/RequestForQuotations/";  break;}
-            case "por":         { x = properties.getProperty("appUrl") + "/api/PurchaseOrderRequests/"; break;}
+            case "requisition":         { x = properties.getProperty("appUrl") + "/api/Requisitions/";              break;}
+            case "salesRequisition" :   { x = properties.getProperty("appUrl") + "/api/RequisitionsOthers/";        break;}
+            case "rfq":                 { x = properties.getProperty("appUrl") + "/api/RequestForQuotations/";      break;}
+            case "por":                 { x = properties.getProperty("appUrl") + "/api/PurchaseOrderRequests/";     break;}
         }
         final String api = x;
 

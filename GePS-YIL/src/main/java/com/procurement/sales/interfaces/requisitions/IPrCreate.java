@@ -16,6 +16,7 @@ public interface IPrCreate {
     Map<String, String> vendor();
     List<String> rateContract(Map<String, String> rateContractArray);
     void addLineRequisitionItemsCatalog(List<String> rateContractItems);
+    void addLineRequisitionItemsNonCatalog();
     void incoterm();
     void liquidatedDamages();
     void warrantyRequirements();
@@ -29,4 +30,7 @@ public interface IPrCreate {
     void inspectionRequired();
     void orderIntake();
     void targetPrice();
+    void notes();
+    void attachments();
+    void prCreate();
 }
