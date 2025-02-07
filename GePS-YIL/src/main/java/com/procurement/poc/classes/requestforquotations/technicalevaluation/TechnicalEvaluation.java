@@ -64,7 +64,7 @@ public class TechnicalEvaluation implements ITeCreate {
         sendForApprovalLocator.click();
 
         Locator teApproverSelectLocator = page.locator(APPROVER_SELECT.getLocator());
-        waitForLocator(teApproverSelectLocator);
+//        waitForLocator(teApproverSelectLocator);
         teApproverSelectLocator.first().click();
 
         String teApprover = properties.getProperty("teApprover");

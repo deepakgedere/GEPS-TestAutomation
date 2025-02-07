@@ -35,7 +35,7 @@ public class BaseTest {
 
     @BeforeTest
     @Parameters("purchaseType")
-    public void setUp(@Optional("catalog") String purchaseType) {
+    public void setUp(@Optional("noncatalog") String purchaseType) {
         try {
             playwrightFactory = new PlaywrightFactory();
             properties = playwrightFactory.initializeProperties();

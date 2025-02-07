@@ -105,7 +105,7 @@ public class Quote implements IQuoSubmit {
         String vendorEmailId = properties.getProperty("vendorEmail");
         iLogin.performLogin(vendorEmailId);
 
-        String title = properties.getProperty("orderTitle");
+        String title = properties.getProperty("currentTitle");
         Locator getTitleLocator = page.locator(getString(title));
         waitForLocator(getTitleLocator);
         getTitleLocator.first().click();
